@@ -1,0 +1,107 @@
+# depslib dependency file v1.0
+1752992528 source:c:\users\outer\onedrive\documentos\cg\code\rabisquim\animation.c
+
+1752992514 source:c:\users\outer\onedrive\documentos\cg\code\rabisquim\file_io.c
+
+1753045338 source:c:\users\outer\onedrive\documentos\cg\code\rabisquim\input.c
+	<GL/glut.h>
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+	"config.h"
+	"input.h"
+	"objects.h"
+	"point.h"
+	"segment.h"
+	"polygon.h"
+	"transformations.h"
+
+1753043305 source:c:\users\outer\onedrive\documentos\cg\code\rabisquim\point.c
+	<GL/glut.h>
+	<stdio.h>
+	"point.h"
+	"config.h"
+
+1753043557 source:c:\users\outer\onedrive\documentos\cg\code\rabisquim\polygon.c
+	<GL/glut.h>
+	<stdio.h>
+	"polygon.h"
+	"point.h"
+	"config.h"
+
+1753058488 source:c:\users\outer\onedrive\documentos\cg\code\rabisquim\render.c
+	<stdio.h>
+	<GL/glut.h>
+	"render.h"
+	"objects.h"
+
+1752997587 c:\users\outer\onedrive\documentos\cg\code\rabisquim\render.h
+
+1753043348 source:c:\users\outer\onedrive\documentos\cg\code\rabisquim\segment.c
+	<GL/glut.h>
+	<stdio.h>
+	<math.h>
+	"segment.h"
+	"point.h"
+
+1753045542 source:c:\users\outer\onedrive\documentos\cg\code\rabisquim\main.c
+	<GL/glut.h>
+	<stdio.h>
+	<stdlib.h>
+	"config.h"
+	"render.h"
+	"input.h"
+	"objects.h"
+	"point.h"
+	"segment.h"
+	"polygon.h"
+	"transformations.h"
+
+1753045221 c:\users\outer\onedrive\documentos\cg\code\rabisquim\input.h
+	"point.h"
+	"config.h"
+	"polygon.h"
+
+1752992491 source:c:\users\outer\onedrive\documentos\cg\code\rabisquim\transform.c
+
+1752992548 source:c:\users\outer\onedrive\documentos\cg\code\rabisquim\utils.c
+
+1753043285 c:\users\outer\onedrive\documentos\cg\code\rabisquim\point.h
+
+1753043666 c:\users\outer\onedrive\documentos\cg\code\rabisquim\objects.h
+	"point.h"
+	"segment.h"
+	"polygon.h"
+	"config.h"
+
+1753043679 source:c:\users\outer\onedrive\documentos\cg\code\rabisquim\objects.c
+	<stdio.h>
+	<stdlib.h>
+	<GL/glut.h>
+	"objects.h"
+	"point.h"
+	"segment.h"
+	"polygon.h"
+	"config.h"
+
+1753043336 c:\users\outer\onedrive\documentos\cg\code\rabisquim\segment.h
+	"point.h"
+
+1753043276 c:\users\outer\onedrive\documentos\cg\code\rabisquim\config.h
+
+1753043373 c:\users\outer\onedrive\documentos\cg\code\rabisquim\polygon.h
+	"point.h"
+	"config.h"
+
+1753059619 c:\users\outer\onedrive\documentos\cg\code\rabisquim\transformations.h
+	"objects.h"
+	"point.h"
+
+1753059855 source:c:\users\outer\onedrive\documentos\cg\code\rabisquim\transformations.c
+	<stdio.h>
+	"transformations.h"
+	"objects.h"
+	"point.h"
+	"segment.h"
+	"polygon.h"
+
