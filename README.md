@@ -51,10 +51,10 @@ As seguintes transformações podem ser aplicadas aos objetos selecionados:
 
 | Nome Completo | GitHub |
 |---|---|
-| Nome do Membro 1 | [@usuario-github](https://github.com/usuario-github) |
-| Nome do Membro 2 | [@usuario-github](https://github.com/usuario-github) |
-| Nome do Membro 3 | [@usuario-github](https://github.com/usuario-github) |
-| Nome do Membro 4 | [@usuario-github](https://github.com/usuario-github) |
+| David Hudson | [@DavidHuds0n](https://github.com/DavidHuds0n) |
+| Luana Teles | [@lua-teles](https://github.com/lua-teles) |
+| Vitória Pontes | [@VitoriaPontes](https://github.com/VitoriaPontes) |
+| Najla Maria | *(GitHub a ser adicionado)* |
 
 ## 📂 Apresentação
 
