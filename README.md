@@ -54,7 +54,7 @@ As seguintes transformações podem ser aplicadas aos objetos selecionados:
 | David Hudson | [@DavidHuds0n](https://github.com/DavidHuds0n) |
 | Luana Teles | [@lua-teles](https://github.com/lua-teles) |
 | Vitória Pontes | [@VitoriaPontes](https://github.com/VitoriaPontes) |
-| Najla Maria | *(GitHub a ser adicionado)* |
+| Najla Cavalcante | [@najlacavalcante](https://github.com/najlacavalcante) |
 
 ## 📂 Apresentação
 
