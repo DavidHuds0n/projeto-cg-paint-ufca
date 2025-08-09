@@ -42,7 +42,6 @@ As seguintes transformações podem ser aplicadas aos objetos selecionados:
 
 ## 🔧 Como Compilar e Executar
 
-*Descreva aqui os passos para compilar o projeto. Exemplo:*
 1.  Abra o arquivo `projeto-cg-paint-ufca.cbp` no Code::Blocks.
 2.  Certifique-se de que as bibliotecas do OpenGL (GLUT) estão corretamente configuradas no compilador.
 3.  Clique em `Build and Run` (F9).
@@ -58,6 +57,6 @@ As seguintes transformações podem ser aplicadas aos objetos selecionados:
 
 ## 📂 Apresentação
 
-- [Link para os Slides da Apresentação] *(Adicione o link quando tiver os slides)*
+- [Link para os Slides da Apresentação]
 
 ---
