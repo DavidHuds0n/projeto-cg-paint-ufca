@@ -61,6 +61,8 @@ void clearObject(Object* obj) {
 
 // Remove um objeto da lista pelo seu índice
 void removeObject(int index) {
+    printf("--- FUNÇÃO removeObject FOI CHAMADA PARA O ÍNDICE %d ---\n", index); // LINHA DE TESTE
+
     if (index >= 0 && index < g_numObjects) {
         // Primeiro, limpa a memória do objeto a ser removido
         clearObject(&g_objects[index]);

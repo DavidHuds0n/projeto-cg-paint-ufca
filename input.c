@@ -47,56 +47,68 @@ float distPointToPolygonEdges(Point click_point, GfxPolygon* poly) {
     return min_dist;
 }
 
-// Callback para eventos de teclado
+// CORREÇÃO PARA A FUNÇÃO keyboardCallback em input.c
+
 void keyboardCallback(unsigned char key, int x, int y) {
     printf("[Input] Tecla pressionada: %c (ASCII: %d) em (%d, %d)\n", key, key, x, y);
 
-    // Ao mudar de modo, sempre resetamos estados de criação e seleção
-    ProgramMode oldMode = g_currentMode; // Guarda o modo antigo para logs específicos
-    g_currentMode = MODE_CREATE_POINT; // Valor padrão
-    g_selectedObjectIndex = -1;
-    g_segmentClickCount = 0;
-    g_polygonVertexCount = 0;
-    g_isDragging = 0; // Garante que o arraste seja interrompido
+    // A lógica de resetar o estado foi movida para dentro do switch
 
     switch (key) {
         case 'p':
         case 'P':
             g_currentMode = MODE_CREATE_POINT;
+            g_selectedObjectIndex = -1; // Reseta a seleção ao mudar de modo
+            g_segmentClickCount = 0;
+            g_polygonVertexCount = 0;
             printf("[Input] Modo alterado para: Criar Pontos.\n");
             break;
+
         case 's':
         case 'S':
             g_currentMode = MODE_SELECT;
+            g_selectedObjectIndex = -1; // Reseta a seleção ao entrar no modo de seleção
+            g_segmentClickCount = 0;
+            g_polygonVertexCount = 0;
             printf("[Input] Modo alterado para: Seleção.\n");
             break;
+
         case 'l':
         case 'L':
             g_currentMode = MODE_CREATE_SEGMENT;
+            g_selectedObjectIndex = -1; // Reseta a seleção ao mudar de modo
+            g_segmentClickCount = 0;
+            g_polygonVertexCount = 0;
             printf("[Input] Modo alterado para: Criar Segmentos (Linhas).\n");
             break;
+
         case 'o':
         case 'O':
             g_currentMode = MODE_CREATE_POLYGON;
-            printf("[Input] Modo alterado para: Criar Polígonos. Clique com o botão ESQUERDO para adicionar vértices. Clique com o botão DIREITO para finalizar o polígono.\n");
+            g_selectedObjectIndex = -1; // Reseta a seleção ao mudar de modo
+            g_segmentClickCount = 0;
+            g_polygonVertexCount = 0;
+            printf("[Input] Modo alterado para: Criar Polígonos.\n");
             break;
+
         case 127: // Tecla DELETE (ASCII 127)
+            // Agora a verificação funciona, pois a seleção não foi resetada.
             if (g_selectedObjectIndex != -1) {
-                printf("[Input] Deletando objeto selecionado no índice: %d (Tipo: %d).\n", g_selectedObjectIndex, g_objects[g_selectedObjectIndex].type);
+                printf("[Input] Deletando objeto selecionado no índice: %d.\n", g_selectedObjectIndex);
                 removeObject(g_selectedObjectIndex);
             } else {
                 printf("[Input] NENHUM objeto selecionado para deletar.\n");
             }
-            break; // Já chamamos glutPostRedisplay fora do switch
+            break;
+
         case 27: // Tecla ESC
             printf("[Input] Saindo do programa...\n");
+            clearAllObjects(); // Boa prática: limpar a memória antes de sair
             exit(0);
             break;
-        default:
-            // Se a tecla não for reconhecida, o modo é mantido como estava antes
-            g_currentMode = oldMode;
-            break;
     }
+
+    // Solicita o redesenho da tela para refletir qualquer mudança (ex: exclusão)
     glutPostRedisplay();
 }
 

@@ -74,7 +74,7 @@
 	"polygon.h"
 	"config.h"
 
-1753043679 source:c:\users\outer\onedrive\documentos\cg\code\rabisquim\objects.c
+1755181540 source:c:\users\outer\onedrive\documentos\cg\code\rabisquim\objects.c
 	<stdio.h>
 	<stdlib.h>
 	<GL/glut.h>
