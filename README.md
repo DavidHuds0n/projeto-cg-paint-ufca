@@ -23,7 +23,7 @@ O usuário pode criar os seguintes objetos primários, definindo quais e quantas
 
 ### 2. Seleção e Exclusão de Objetos
 - ✅ Seleção individual de qualquer objeto primário na tela.
-- 🚧 Exclusão de qualquer objeto previamente selecionado.
+- ✅ Exclusão de qualquer objeto previamente selecionado.
 
 ### 3. Transformações Geométricas
 As seguintes transformações podem ser aplicadas aos objetos selecionados:
