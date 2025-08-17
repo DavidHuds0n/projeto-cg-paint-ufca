@@ -13,32 +13,36 @@ Projeto desenvolvido para a disciplina de Computação Gráfica do curso de Ciê
 - ✅ **Concluído**
 - 🚧 **Em Desenvolvimento / A Fazer**
 
-## ✨ Funcionalidades Implementadas
+## ✨ Funcionalidades
 
 ### 1. Criação de Objetos
 O usuário pode criar os seguintes objetos primários, definindo quais e quantas vezes desejar:
 - ✅ Ponto
 - ✅ Segmento de Reta
-- ✅ Polígono (não preenchido)
+- ✅ Polígono (preenchido, com suporte a côncavo simples)
 
-### 2. Seleção e Exclusão de Objetos
+### 2. Seleção e Exclusão
 - ✅ Seleção individual de qualquer objeto primário na tela.
 - ✅ Exclusão de qualquer objeto previamente selecionado.
 
-### 3. Transformações Geométricas
+### 3. Melhorias de Usabilidade (UX)
+- ✅ **Desenho em Camadas:** O objeto atualmente selecionado é sempre desenhado na frente dos demais, facilitando a visualização em cenas complexas.
+- ✅ **Feedback Visual:** Durante a criação de um polígono, o usuário visualiza os vértices e arestas em tempo real, antes mesmo de finalizar a forma.
+
+### 4. Transformações Geométricas
 As seguintes transformações podem ser aplicadas aos objetos selecionados:
 - ✅ **Translação:** Implementada com a funcionalidade de "Arrastar e Soltar".
-- 🚧 **Rotação:** Realizada em relação ao centro do objeto. Para o ponto, a rotação é em relação à origem do sistema de coordenadas.
-- 🚧 **Escala:** Realizada em relação ao centro do objeto. (Não se aplica ao Ponto).
+- 🚧 **Rotação:** Realizada em relação ao centro do objeto.
+- 🚧 **Escala:** Realizada em relação ao centro do objeto.
 - 🚧 **Reflexão**
 - 🚧 **Cisalhamento**
 
-### 4. Gerenciamento de Arquivos
-- 🚧 **Salvar:** Capacidade de salvar todos os objetos criados na cena em um arquivo externo.
-- 🚧 **Carregar:** Capacidade de carregar e exibir objetos a partir de um arquivo previamente salvo.
+### 5. Gerenciamento de Arquivos
+- 🚧 **Salvar:** Salvar todos os objetos da cena em um arquivo externo.
+- 🚧 **Carregar:** Carregar e exibir objetos a partir de um arquivo salvo.
 
-### 5. Animação
-- 🚧 Implementação de uma funcionalidade criativa de animação com os objetos primários.
+### 6. Animação
+- 🚧 Implementação de uma funcionalidade criativa de animação com os objetos.
 
 ## 🔧 Como Compilar e Executar
 
