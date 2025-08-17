@@ -12,12 +12,16 @@
 #include "segment.h"
 #include "polygon.h"
 #include "config.h"
-#include "input.h" // Necessário para acessar g_currentMode e g_polygonVertexCount
+#include "input.h"
 
 // --- Definição das Variáveis Globais ---
 Object g_objects[MAX_OBJECTS];
 int g_numObjects = 0;
 int g_selectedObjectIndex = -1;
+
+// --- Funções Privadas (Auxiliares) ---
+void clearObject(Object* obj);
+void drawObject(int index, int is_selected);
 
 // --- Funções Públicas ---
 
@@ -63,20 +67,17 @@ void clearAllObjects() {
 
 void drawAllObjects() {
     // 1ª PASSADA: Desenha todos os objetos que NÃO estão selecionados.
-    // Isso garante que eles fiquem nas camadas de "fundo".
     for (int i = 0; i < g_numObjects; i++) {
         if (i != g_selectedObjectIndex) {
-            drawObject(i, 0); // O '0' força o parâmetro is_selected a ser falso.
+            drawObject(i, 0);
         }
     }
-
-    // 2ª PASSADA: Desenha o objeto selecionado por último.
-    // Isso garante que ele sempre apareça na frente (na camada superior).
+    // 2ª PASSADA: Desenha o objeto selecionado por último (na frente).
     if (g_selectedObjectIndex != -1) {
-        drawObject(g_selectedObjectIndex, 1); // O '1' força o is_selected a ser verdadeiro.
+        drawObject(g_selectedObjectIndex, 1);
     }
 
-    // 3. Lógica de feedback para o polígono em criação (desenhado sobre tudo).
+    // 3. Lógica para desenhar o feedback visual dos objetos em criação.
     if (g_currentMode == MODE_CREATE_POLYGON && g_polygonVertexCount > 0) {
         glColor3f(0.5f, 0.5f, 0.5f);
         glPointSize(CLICK_TOLERANCE / 2.0f);
@@ -96,23 +97,32 @@ void drawAllObjects() {
             glEnd();
         }
     }
+    else if (g_currentMode == MODE_CREATE_SEGMENT && g_segmentClickCount == 1) {
+        // Desenha o primeiro ponto do segmento como marcador.
+        glColor3f(0.5f, 0.5f, 0.5f);
+        glPointSize(CLICK_TOLERANCE / 2.0f);
+        glBegin(GL_POINTS);
+            glVertex2f(g_segmentP1.x, g_segmentP1.y);
+        glEnd();
+        glPointSize(1.0f);
+
+        // Desenha a linha "rubber band" do primeiro ponto até a posição atual do mouse.
+        glColor3f(0.0f, 0.0f, 1.0f);
+        glBegin(GL_LINES);
+            glVertex2f(g_segmentP1.x, g_segmentP1.y);
+            glVertex2f(g_currentMousePos.x, g_currentMousePos.y);
+        glEnd();
+    }
 }
 
-
-// --- Funções Auxiliares (Internas ao Módulo) ---
+// --- Implementação das Funções Privadas ---
 
 void clearObject(Object* obj) {
     if (obj != NULL && obj->data != NULL) {
         switch (obj->type) {
-            case OBJECT_TYPE_POINT:
-                freePoint((Point*)obj->data);
-                break;
-            case OBJECT_TYPE_SEGMENT:
-                freeSegment((Segment*)obj->data);
-                break;
-            case OBJECT_TYPE_POLYGON:
-                freePolygon((GfxPolygon*)obj->data);
-                break;
+            case OBJECT_TYPE_POINT: freePoint((Point*)obj->data); break;
+            case OBJECT_TYPE_SEGMENT: freeSegment((Segment*)obj->data); break;
+            case OBJECT_TYPE_POLYGON: freePolygon((GfxPolygon*)obj->data); break;
         }
         free(obj->data);
         obj->data = NULL;

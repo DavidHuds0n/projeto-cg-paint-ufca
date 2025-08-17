@@ -15,7 +15,7 @@
 
 // Define a "área de acerto" para cliques do mouse, em pixels.
 // Usado para determinar se um clique foi perto o suficiente de um objeto para selecioná-lo.
-#define CLICK_TOLERANCE 10.0f
+#define CLICK_TOLERANCE 5.0f
 
 // Define o limite máximo de objetos que podem ser criados na cena.
 // Controla o tamanho do array global 'g_objects'.
