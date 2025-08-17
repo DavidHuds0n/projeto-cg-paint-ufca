@@ -1,53 +1,82 @@
 // objects.h
-// Definições para o gerenciamento genérico de objetos gráficos (Ponto, Segmento, GfxPolygon).
+// Define a interface pública e as estruturas de dados para o gerenciamento
+// genérico de todos os objetos gráficos da cena. Este módulo é o coração do
+// sistema de dados do projeto.
 
 #ifndef OBJECTS_H
 #define OBJECTS_H
 
-#include "point.h"   // Para Point
-#include "segment.h" // Para Segment
-#include "polygon.h" // Para GfxPolygon (ATUALIZADO)
-#include "config.h"  // NOVO: Para MAX_OBJECTS
+#include "point.h"
+#include "segment.h"
+#include "polygon.h"
+#include "config.h"
 
-// Enumeração dos tipos de objetos gráficos que o programa pode manipular.
+// Enumeração para os diferentes tipos de objetos que o programa pode manipular.
+// Usado para identificar o tipo de dado apontado pelo ponteiro void* na struct Object.
 typedef enum {
-    OBJECT_TYPE_POINT,
-    OBJECT_TYPE_SEGMENT,
-    OBJECT_TYPE_POLYGON // Refere-se a GfxPolygon agora
+    OBJECT_TYPE_POINT,   // Objeto do tipo Ponto.
+    OBJECT_TYPE_SEGMENT, // Objeto do tipo Segmento de Reta.
+    OBJECT_TYPE_POLYGON  // Objeto do tipo Polígono.
 } ObjectType;
 
 // Estrutura genérica para armazenar qualquer tipo de objeto gráfico.
-// Usa um ponteiro void para ser polimórfico e um campo 'type' para identificar o objeto.
+// Esta abordagem permite que diferentes tipos de structs (Point, Segment, etc.)
+// coexistam em um mesmo array, simulando polimorfismo em C.
 typedef struct {
-    void* data;      // Ponteiro para a estrutura específica do objeto (Point*, Segment*, GfxPolygon*).
-    ObjectType type; // Tipo do objeto (usado para fazer o cast correto de 'data').
+    void* data;      // Ponteiro genérico para a struct específica do objeto (ex: Point*, Segment*).
+    ObjectType type; // "Tag" que identifica qual é o tipo de objeto que 'data' aponta.
 } Object;
 
-// Variáveis globais para o gerenciamento da lista de objetos
-// #define MAX_OBJECTS 100 // Removido, agora vem de config.h
 
-extern Object g_objects[MAX_OBJECTS];      // Array global para armazenar todos os objetos.
-extern int g_numObjects;                   // Contador global do número atual de objetos na lista.
-extern int g_selectedObjectIndex;          // Índice do objeto selecionado atualmente na lista (-1 se nenhum).
+// --- Variáveis Globais de Estado ---
+// Declaradas aqui com 'extern' para serem acessíveis por outros módulos,
+// mas definidas (alocadas na memória) em objects.c.
 
-// Protótipos das funções do módulo objects.c
+extern Object g_objects[MAX_OBJECTS]; // O array principal que armazena todos os objetos da cena.
+extern int g_numObjects;              // Contador do número atual de objetos no array.
+extern int g_selectedObjectIndex;     // Índice do objeto selecionado (-1 se nenhum).
 
-// Inicializa a lista de objetos (reseta o contador e o objeto selecionado).
+
+// --- Protótipos das Funções do Módulo ---
+
+/**
+ * @brief Inicializa a lista de objetos, resetando os contadores.
+ * Deve ser chamada no início do programa.
+ */
 void initObjectList();
 
-// Adiciona um novo objeto à lista.
+/**
+ * @brief Adiciona um novo objeto gráfico à lista global.
+ * @param type O tipo do objeto a ser adicionado (ex: OBJECT_TYPE_POINT).
+ * @param data Um ponteiro (previamente alocado com malloc) para a struct do objeto.
+ */
 void addObject(ObjectType type, void* data);
 
-// Remove um objeto da lista pelo seu índice.
+/**
+ * @brief Remove um objeto da lista a partir de seu índice.
+ * Libera a memória do objeto e reorganiza o array.
+ * @param index O índice do objeto a ser removido no array g_objects.
+ */
 void removeObject(int index);
 
-// Limpa todos os objetos da lista e libera a memória alocada.
+/**
+ * @brief Remove todos os objetos da lista e libera toda a memória associada.
+ * Usado ao fechar o programa para evitar vazamentos de memória (memory leaks).
+ */
 void clearAllObjects();
 
-// Desenha um objeto específico da lista (usa o type para chamar a função de desenho correta).
+/**
+ * @brief Desenha um único objeto da lista na tela.
+ * @param index O índice do objeto a ser desenhado.
+ * @param is_selected Flag (1 para verdadeiro, 0 para falso) que indica se o objeto
+ * deve ser desenhado com a cor de seleção.
+ */
 void drawObject(int index, int is_selected);
 
-// Desenha todos os objetos presentes na lista.
+/**
+ * @brief Percorre a lista de objetos e chama drawObject para cada um.
+ * É a função principal de desenho, chamada pelo módulo de renderização.
+ */
 void drawAllObjects();
 
 #endif // OBJECTS_H

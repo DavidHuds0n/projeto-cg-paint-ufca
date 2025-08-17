@@ -1,5 +1,7 @@
 // input.c
-// Implementação das funções para o gerenciamento de entrada do usuário.
+// Implementa toda a lógica de tratamento de eventos do usuário (teclado e mouse).
+// Funciona como uma máquina de estados, onde o comportamento das funções de callback
+// muda de acordo com o modo de operação atual (g_currentMode).
 
 #include <GL/glut.h>
 #include <stdio.h>
@@ -12,34 +14,34 @@
 #include "point.h"
 #include "segment.h"
 #include "polygon.h"
-#include "transformations.h" // NOVO: Vamos precisar de funções de transformação aqui!
+#include "transformations.h"
 
-// Definição das variáveis globais (declaradas em input.h)
+
+// --- Definição das Variáveis Globais de Estado ---
 ProgramMode g_currentMode = MODE_CREATE_POINT;
+int g_isDragging = 0;
+
 int g_segmentClickCount = 0;
 Point g_segmentP1;
 
 Point g_polygonVertices[MAX_POLYGON_VERTICES];
 int g_polygonVertexCount = 0;
 
-// NOVO: Inicialização das variáveis para o Arrastar e Soltar
-int g_isDragging = 0; // 0 = false, 1 = true
 Point g_lastMousePos = {0.0f, 0.0f};
 
 
-// Função auxiliar para verificar se um ponto está perto de alguma aresta de um polígono
+// --- Funções Auxiliares ---
+
+// ATENÇÃO: Esta função será substituída pela implementação do Algoritmo do Tiro.
 float distPointToPolygonEdges(Point click_point, GfxPolygon* poly) {
     if (poly->numVertices < 2) return -1.0f;
-
     float min_dist = -1.0f;
 
     for (int i = 0; i < poly->numVertices; i++) {
         Point p1 = poly->vertices[i];
-        Point p2 = poly->vertices[(i + 1) % poly->numVertices];
-
+        Point p2 = poly->vertices[(i + 1) % poly->numVertices]; // Garante que a última aresta conecte ao primeiro vértice.
         Segment edge = createSegment(p1, p2);
         float dist = distPointSegment(click_point, edge);
-
         if (min_dist == -1.0f || dist < min_dist) {
             min_dist = dist;
         }
@@ -47,144 +49,121 @@ float distPointToPolygonEdges(Point click_point, GfxPolygon* poly) {
     return min_dist;
 }
 
-// CORREÇÃO PARA A FUNÇÃO keyboardCallback em input.c
+
+// --- Funções de Callback ---
 
 void keyboardCallback(unsigned char key, int x, int y) {
-    printf("[Input] Tecla pressionada: %c (ASCII: %d) em (%d, %d)\n", key, key, x, y);
-
-    // A lógica de resetar o estado foi movida para dentro do switch
-
+    // O switch principal que controla a mudança de estado do programa.
     switch (key) {
-        case 'p':
-        case 'P':
+        // Cases para mudança de modo. Resetam o estado para evitar comportamentos inesperados.
+        case 'p': case 'P':
             g_currentMode = MODE_CREATE_POINT;
-            g_selectedObjectIndex = -1; // Reseta a seleção ao mudar de modo
+            g_selectedObjectIndex = -1;
             g_segmentClickCount = 0;
             g_polygonVertexCount = 0;
             printf("[Input] Modo alterado para: Criar Pontos.\n");
             break;
 
-        case 's':
-        case 'S':
+        case 's': case 'S':
             g_currentMode = MODE_SELECT;
-            g_selectedObjectIndex = -1; // Reseta a seleção ao entrar no modo de seleção
+            g_selectedObjectIndex = -1;
             g_segmentClickCount = 0;
             g_polygonVertexCount = 0;
             printf("[Input] Modo alterado para: Seleção.\n");
             break;
 
-        case 'l':
-        case 'L':
+        case 'l': case 'L':
             g_currentMode = MODE_CREATE_SEGMENT;
-            g_selectedObjectIndex = -1; // Reseta a seleção ao mudar de modo
+            g_selectedObjectIndex = -1;
             g_segmentClickCount = 0;
             g_polygonVertexCount = 0;
-            printf("[Input] Modo alterado para: Criar Segmentos (Linhas).\n");
+            printf("[Input] Modo alterado para: Criar Segmentos.\n");
             break;
 
-        case 'o':
-        case 'O':
+        case 'o': case 'O':
             g_currentMode = MODE_CREATE_POLYGON;
-            g_selectedObjectIndex = -1; // Reseta a seleção ao mudar de modo
+            g_selectedObjectIndex = -1;
             g_segmentClickCount = 0;
             g_polygonVertexCount = 0;
             printf("[Input] Modo alterado para: Criar Polígonos.\n");
             break;
 
-        case 127: // Tecla DELETE (ASCII 127)
-            // Agora a verificação funciona, pois a seleção não foi resetada.
+        // Cases para ações que NÃO mudam o modo.
+        case 127: // Tecla DELETE
             if (g_selectedObjectIndex != -1) {
-                printf("[Input] Deletando objeto selecionado no índice: %d.\n", g_selectedObjectIndex);
                 removeObject(g_selectedObjectIndex);
-            } else {
-                printf("[Input] NENHUM objeto selecionado para deletar.\n");
             }
             break;
 
         case 27: // Tecla ESC
-            printf("[Input] Saindo do programa...\n");
-            clearAllObjects(); // Boa prática: limpar a memória antes de sair
+            clearAllObjects();
             exit(0);
             break;
     }
-
-    // Solicita o redesenho da tela para refletir qualquer mudança (ex: exclusão)
+    // Força o redesenho da tela para refletir qualquer mudança (ex: objeto deletado, mudança de seleção).
     glutPostRedisplay();
 }
 
-// Callback para eventos de mouse
+// Callback para eventos de clique do mouse.
 void mouseCallback(int button, int state, int x, int y) {
-    float gl_y = WINDOW_HEIGHT - (float)y; // Converte Y do mouse para coordenadas OpenGL
-    Point click_point = { (float)x, gl_y }; // Cria um Point para o clique
+    // Converte a coordenada Y do sistema de janelas (origem no topo esquerdo)
+    // para o sistema de coordenadas do OpenGL (origem no canto inferior esquerdo).
+    float gl_y = WINDOW_HEIGHT - (float)y;
+    Point click_point = { (float)x, gl_y };
 
-    if (state == GLUT_DOWN) { // Botão pressionado
-        // --- MODO DE CRIAÇÃO DE PONTOS ---
+    // Ações são executadas apenas quando o botão é pressionado (GLUT_DOWN).
+    if (state == GLUT_DOWN) {
+        // --- MÁQUINA DE ESTADOS BASEADA NO MODO ATUAL ---
+
         if (g_currentMode == MODE_CREATE_POINT) {
             if (button == GLUT_LEFT_BUTTON) {
-                printf("[Input] Clique para criar ponto em (%.1f, %.1f).\n", click_point.x, click_point.y);
                 Point* newPoint = (Point*)malloc(sizeof(Point));
-                if (newPoint == NULL) { fprintf(stderr, "[Input ERROR] Falha ao alocar memória para novo ponto.\n"); return; }
                 *newPoint = createPoint(click_point.x, click_point.y);
                 addObject(OBJECT_TYPE_POINT, newPoint);
-                g_selectedObjectIndex = g_numObjects - 1;
-                glutPostRedisplay();
+                g_selectedObjectIndex = g_numObjects - 1; // LINHA CORRIGIDA: Seleciona o objeto recém-criado.
             }
-
-        // --- MODO DE CRIAÇÃO DE SEGMENTOS ---
-        } else if (g_currentMode == MODE_CREATE_SEGMENT) {
+        }
+        else if (g_currentMode == MODE_CREATE_SEGMENT) {
             if (button == GLUT_LEFT_BUTTON) {
                 g_segmentClickCount++;
-                printf("[Input] Clique para criar segmento (clique %d) em (%.1f, %.1f).\n", g_segmentClickCount, click_point.x, click_point.y);
                 if (g_segmentClickCount == 1) {
-                    g_segmentP1 = createPoint(click_point.x, click_point.y);
+                    // Primeiro clique: armazena o ponto inicial.
+                    g_segmentP1 = click_point;
                 } else if (g_segmentClickCount == 2) {
-                    Point segP2 = createPoint(click_point.x, click_point.y);
+                    // Segundo clique: cria o segmento e reseta o contador.
                     Segment* newSegment = (Segment*)malloc(sizeof(Segment));
-                    if (newSegment == NULL) { fprintf(stderr, "[Input ERROR] Falha ao alocar memória para novo segmento.\n"); return; }
-                    *newSegment = createSegment(g_segmentP1, segP2);
+                    *newSegment = createSegment(g_segmentP1, click_point);
                     addObject(OBJECT_TYPE_SEGMENT, newSegment);
-                    g_selectedObjectIndex = g_numObjects - 1;
+                    g_selectedObjectIndex = g_numObjects - 1; // LINHA CORRIGIDA: Seleciona o objeto recém-criado.
                     g_segmentClickCount = 0;
-                    glutPostRedisplay();
                 }
-            } else if (button == GLUT_RIGHT_BUTTON) {
-                g_segmentClickCount = 0;
-                printf("[Input] Criação de segmento resetada (clique direito).\n");
             }
-
-        // --- MODO DE CRIAÇÃO DE POLÍGONOS ---
-        } else if (g_currentMode == MODE_CREATE_POLYGON) {
+        }
+        else if (g_currentMode == MODE_CREATE_POLYGON) {
             if (button == GLUT_LEFT_BUTTON) {
+                // Adiciona vértices ao buffer temporário até o limite.
                 if (g_polygonVertexCount < MAX_POLYGON_VERTICES) {
                     g_polygonVertices[g_polygonVertexCount] = click_point;
                     g_polygonVertexCount++;
-                    printf("[Input] Vértice adicionado ao polígono em (%.1f, %.1f). Total de vértices para o polígono atual: %d.\n", click_point.x, click_point.y, g_polygonVertexCount);
-                    glutPostRedisplay();
-                } else {
-                    fprintf(stderr, "[Input ERROR] Limite máximo de vértices (%d) para o polígono atual atingido.\n", MAX_POLYGON_VERTICES);
                 }
             } else if (button == GLUT_RIGHT_BUTTON) {
+                // Clique direito finaliza o polígono se ele tiver vértices suficientes.
                 if (g_polygonVertexCount >= 3) {
                     GfxPolygon* newPolygon = (GfxPolygon*)malloc(sizeof(GfxPolygon));
-                    if (newPolygon == NULL) { fprintf(stderr, "[Input ERROR] Falha ao alocar memória para novo polígono.\n"); return; }
                     *newPolygon = createPolygon();
                     for (int i = 0; i < g_polygonVertexCount; i++) {
                         addVertexToPolygon(newPolygon, g_polygonVertices[i]);
                     }
                     addObject(OBJECT_TYPE_POLYGON, newPolygon);
-                    g_selectedObjectIndex = g_numObjects - 1;
-                    g_polygonVertexCount = 0;
-                    glutPostRedisplay();
-                } else {
-                    printf("[Input] Para finalizar um polígono, são necessários pelo menos 3 vértices. Vértices atuais: %d. Resetando a criação do polígono.\n", g_polygonVertexCount);
-                    g_polygonVertexCount = 0;
+                    g_selectedObjectIndex = g_numObjects - 1; // LINHA CORRIGIDA: Seleciona o objeto recém-criado.
                 }
+                // Limpa o buffer de vértices para o próximo polígono.
+                g_polygonVertexCount = 0;
             }
-
-        // --- MODO DE SELEÇÃO ---
-        } else if (g_currentMode == MODE_SELECT) {
+        }
+        else if (g_currentMode == MODE_SELECT) {
             if (button == GLUT_LEFT_BUTTON) {
-                printf("[Input] Clique do mouse para seleção em (%.1f, %.1f).\n", click_point.x, click_point.y);
+                // // TODO: Esta seção deve ser refatorada para usar os algoritmos da aula.
 
                 int found_index = -1;
                 float min_distance_found = CLICK_TOLERANCE + 1.0f;
@@ -197,7 +176,6 @@ void mouseCallback(int button, int state, int x, int y) {
                         float dx = click_point.x - p_obj->x;
                         float dy = click_point.y - p_obj->y;
                         current_distance = sqrtf((dx * dx) + (dy * dy));
-
                     } else if (g_objects[i].type == OBJECT_TYPE_SEGMENT) {
                         Segment* s_obj = (Segment*)g_objects[i].data;
                         current_distance = distPointSegment(click_point, *s_obj);
@@ -215,53 +193,39 @@ void mouseCallback(int button, int state, int x, int y) {
                 }
 
                 g_selectedObjectIndex = found_index;
-
                 if (g_selectedObjectIndex != -1) {
-                    printf("[Input] Objeto selecionado no índice: %d (Tipo: %d).\n", g_selectedObjectIndex, g_objects[g_selectedObjectIndex].type);
-                    // NOVO: Inicia o arraste se um objeto foi selecionado
-                    g_isDragging = 1; // Ativa a flag de arraste
-                    g_lastMousePos = click_point; // Registra a posição inicial do mouse
-                } else {
-                    printf("[Input] Nenhum objeto selecionado.\n");
-                    g_isDragging = 0; // Desativa o arraste se nada foi selecionado
+                    g_isDragging = 1;
+                    g_lastMousePos = click_point;
                 }
-
-                glutPostRedisplay();
-            } else if (button == GLUT_RIGHT_BUTTON) {
-                // Desseleciona ao clicar com o botão direito no modo seleção
-                if (g_selectedObjectIndex != -1) {
-                    printf("[Input] Objeto no índice %d desselecionado.\n", g_selectedObjectIndex);
-                    g_selectedObjectIndex = -1;
-                    glutPostRedisplay();
-                }
-                g_isDragging = 0; // Para qualquer arraste ativo
             }
         }
-    } else if (state == GLUT_UP) { // Botão liberado
+        // Solicita redesenho ao final de qualquer clique que possa alterar a cena.
+        glutPostRedisplay();
+    }
+    // Ações para quando o botão é liberado (GLUT_UP).
+    else if (state == GLUT_UP) {
+        // Para a operação de arrastar ao soltar o botão esquerdo.
         if (button == GLUT_LEFT_BUTTON) {
-            if (g_isDragging) {
-                printf("[Input] Arraste do objeto finalizado.\n");
-            }
-            g_isDragging = 0; // Desativa a flag de arraste ao liberar o botão esquerdo
+            g_isDragging = 0;
         }
     }
 }
 
-// NOVO: Callback para eventos de movimento do mouse enquanto um botão está pressionado
 void motionCallback(int x, int y) {
+    // Esta função só executa ações se a flag g_isDragging estiver ativa.
     if (g_isDragging && g_currentMode == MODE_SELECT && g_selectedObjectIndex != -1) {
         float gl_y = WINDOW_HEIGHT - (float)y;
         Point currentMousePos = {(float)x, gl_y};
 
+        // Calcula o deslocamento (delta) do mouse desde o último frame.
         float dx = currentMousePos.x - g_lastMousePos.x;
         float dy = currentMousePos.y - g_lastMousePos.y;
 
-        // Chama a função de translação para o objeto selecionado
-        // Precisaremos criar a função 'translateObject' no módulo 'transformations'
+        // Aplica a translação com base nesse deslocamento.
         translateObject(g_selectedObjectIndex, dx, dy);
-        printf("[Input] Arrastando objeto %d por (%.1f, %.1f). Nova pos mouse (%.1f, %.1f).\n", g_selectedObjectIndex, dx, dy, currentMousePos.x, currentMousePos.y);
 
-        g_lastMousePos = currentMousePos; // Atualiza a última posição do mouse
-        glutPostRedisplay(); // Solicita redesenho para ver o objeto se movendo
+        // Atualiza a última posição do mouse para o próximo cálculo de delta.
+        g_lastMousePos = currentMousePos;
+        glutPostRedisplay();
     }
 }

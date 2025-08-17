@@ -1,61 +1,75 @@
 // segment.c
-// Implementação das funções para manipulação de segmentos.
+// Implementação das funções para criar, desenhar e liberar objetos do tipo Segmento de Reta.
 
-#include <GL/glut.h> // Para funções de desenho OpenGL (glVertex, glBegin, glEnd, glColor)
-#include <stdio.h>   // Para printf (para depuração)
-#include <math.h>    // Para usar sqrt, pow, fmaxf, fminf
-#include "segment.h" // Inclui o próprio cabeçalho
-#include "point.h"   // Para usar a estrutura Point
+#include <GL/glut.h>
+#include <stdio.h>
+#include <math.h>
 
-// Implementação das funções para Segment
+#include "segment.h"
+#include "point.h"
 
-// Cria um novo segmento com dois pontos.
+
 Segment createSegment(Point p1, Point p2) {
     Segment s = {p1, p2};
-    printf("[Segment] Novo segmento criado de (%.1f, %.1f) para (%.1f, %.1f).\n", p1.x, p1.y, p2.x, p2.y);
+    // O printf abaixo é para fins de depuração.
+    // printf("[Segment] Novo segmento criado.\n");
     return s;
 }
 
-// Desenha o segmento na tela. Agora recebe um ponteiro.
-void drawSegment(Segment* s, int is_selected) { // ATUALIZADO: Recebe Segment*
+void drawSegment(Segment* s, int is_selected) {
+    // Define a cor do segmento com base no estado de seleção.
     if (is_selected) {
-        glColor3f(1.0f, 0.0f, 0.0f); // Vermelho se selecionado
+        glColor3f(1.0f, 0.0f, 0.0f); // Vermelho se selecionado.
     } else {
-        glColor3f(0.0f, 0.0f, 1.0f); // Azul se não selecionado
+        glColor3f(0.0f, 0.0f, 1.0f); // Azul se não selecionado.
     }
-    glLineWidth(2.0f); // Largura da linha
+
+    // Aumenta a espessura da linha para melhor visualização.
+    glLineWidth(2.0f);
+
+    // Desenha a linha na tela usando as primitivas do OpenGL.
     glBegin(GL_LINES);
-    glVertex2f(s->p1.x, s->p1.y); // Usa s->p1.x e s->p1.y pois é um ponteiro
-    glVertex2f(s->p2.x, s->p2.y);
+        glVertex2f(s->p1.x, s->p1.y);
+        glVertex2f(s->p2.x, s->p2.y);
     glEnd();
-    glLineWidth(1.0f); // Volta à largura de linha padrão
+
+    // Reseta a espessura da linha para o padrão para não afetar outros desenhos.
+    glLineWidth(1.0f);
 }
 
-// Calcula a distância de um ponto a um segmento.
 float distPointSegment(Point p, Segment s) {
+    // Vetor que representa o segmento de reta (de p1 para p2).
     float dx = s.p2.x - s.p1.x;
     float dy = s.p2.y - s.p1.y;
-    float lengthSq = dx * dx + dy * dy;
 
-    if (lengthSq == 0.0f) { // Segmento é um ponto
+    // Se o segmento for, na verdade, um ponto (comprimento zero).
+    if (dx == 0 && dy == 0) {
         float dist_x = p.x - s.p1.x;
         float dist_y = p.y - s.p1.y;
         return sqrtf(dist_x * dist_x + dist_y * dist_y);
     }
 
+    // Calcula o parâmetro 't', que é a projeção do vetor (p - p1) sobre o vetor do segmento.
+    // 't' representa o quão "longe" ao longo da linha infinita o ponto mais próximo está.
+    float lengthSq = dx * dx + dy * dy;
     float t = ((p.x - s.p1.x) * dx + (p.y - s.p1.y) * dy) / lengthSq;
-    t = fmaxf(0.0f, fminf(1.0f, t)); // Clampa t entre 0 e 1
 
+    // "Clampa" (restringe) o valor de 't' para o intervalo [0, 1].
+    // Se t < 0, o ponto mais próximo é p1. Se t > 1, é p2. Se 0 <= t <= 1, está no meio.
+    // Esta é a lógica crucial que faz o cálculo funcionar para um SEGMENTO, não para uma RETA.
+    t = fmaxf(0.0f, fminf(1.0f, t));
+
+    // Calcula as coordenadas do ponto mais próximo no segmento de reta.
     Point closest = {s.p1.x + t * dx, s.p1.y + t * dy};
 
+    // Retorna a distância euclidiana entre o ponto original e o ponto mais próximo encontrado.
     float dist_x = p.x - closest.x;
     float dist_y = p.y - closest.y;
     return sqrtf(dist_x * dist_x + dist_y * dist_y);
 }
 
-// Libera a memória alocada para um segmento.
-// Para a estrutura Segment atual, não há memória dinâmica interna para liberar.
-void freeSegment(Segment* s) { // NOVO
-    printf("[Segment] Função freeSegment chamada para segmento de (%.1f, %.1f) para (%.1f, %.1f).\n", s->p1.x, s->p1.y, s->p2.x, s->p2.y);
-    // Não há 'free' aqui porque a Segment struct não contém ponteiros alocados dinamicamente
+void freeSegment(Segment* s) {
+    // A estrutura 'Segment' não possui ponteiros internos, então não há o que liberar.
+    // A função existe para manter a consistência com a API do 'objects.c'.
+    // printf("[Segment] Função freeSegment chamada.\n");
 }

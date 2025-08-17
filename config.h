@@ -1,5 +1,7 @@
 // config.h
-// Definições de configurações globais do projeto.
+// Arquivo de configuração central do projeto "Rabisquim".
+// Contém constantes globais para facilitar a manutenção e ajuste do programa.
+// Mudar um valor aqui afeta o programa inteiro.
 
 #ifndef CONFIG_H
 #define CONFIG_H
@@ -7,11 +9,20 @@
 // --- Configurações da Janela ---
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
-#define WINDOW_TITLE "Rabisquim - v0.1"
+#define WINDOW_TITLE "Rabisquim - v0.2" // Versão atualizada :)
 
-// --- Outras constantes do projeto (ex: tolerâncias, limites de objetos) ---
-#define CLICK_TOLERANCE 10.0f           // Tolerância de clique para seleção (em pixels)
-#define MAX_OBJECTS 100                 // Número máximo de objetos que a cena pode conter.
-#define MAX_POLYGON_VERTICES 100        // NOVO: Número máximo de vértices para um polígono.
+// --- Constantes de Lógica e Interação ---
+
+// Define a "área de acerto" para cliques do mouse, em pixels.
+// Usado para determinar se um clique foi perto o suficiente de um objeto para selecioná-lo.
+#define CLICK_TOLERANCE 10.0f
+
+// Define o limite máximo de objetos que podem ser criados na cena.
+// Controla o tamanho do array global 'g_objects'.
+#define MAX_OBJECTS 100
+
+// Define o limite máximo de vértices que um único polígono pode ter.
+// Controla o tamanho do array 'vertices' na struct GfxPolygon.
+#define MAX_POLYGON_VERTICES 100
 
 #endif // CONFIG_H

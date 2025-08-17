@@ -1,31 +1,50 @@
 // polygon.h
-// Definição da estrutura GfxPolygon e protótipos de funções para manipulação de polígonos.
+// Define a estrutura de dados e a interface pública para o objeto Polígono.
+// Este objeto é construído interativamente e renderizado como uma área preenchida.
 
 #ifndef POLYGON_H
 #define POLYGON_H
 
-#include "point.h"   // Polígonos são compostos por Pontos
-#include "config.h"  // NOVO: Para usar MAX_POLYGON_VERTICES
+#include "point.h"
+#include "config.h"
 
-// Definição da estrutura GfxPolygon (renomeado de Polygon)
-// Um polígono será uma coleção de pontos (vértices)
-// O número máximo de vértices é definido em config.h
+// Estrutura para representar um polígono 2D.
+// Utiliza um array de tamanho fixo para armazenar os vértices.
 typedef struct {
-    Point vertices[MAX_POLYGON_VERTICES];
-    int numVertices;
-} GfxPolygon; // RENOMEADO: Agora é GfxPolygon
+    Point vertices[MAX_POLYGON_VERTICES]; // Array para armazenar os vértices do polígono.
+    int numVertices;                      // Contador do número atual de vértices no polígono.
+} GfxPolygon;
 
-// Protótipos das funções para GfxPolygon
-// Cria um novo polígono vazio (pronto para adicionar vértices)
-GfxPolygon createPolygon(); // ATUALIZADO: Retorna GfxPolygon
 
-// Adiciona um vértice ao polígono
-void addVertexToPolygon(GfxPolygon* poly, Point p); // ATUALIZADO: Recebe GfxPolygon*
+// --- Protótipos das Funções ---
 
-// Desenha o polígono na tela
-void drawPolygon(GfxPolygon* poly, int is_selected); // ATUALIZADO: Recebe GfxPolygon*
+/**
+ * @brief Cria (inicializa) uma estrutura de polígono vazia.
+ * @return GfxPolygon Uma nova estrutura GfxPolygon com numVertices = 0.
+ */
+GfxPolygon createPolygon();
 
-// Libera a memória alocada para um polígono
-void freePolygon(GfxPolygon* poly); // ATUALIZADO: Recebe GfxPolygon*
+/**
+ * @brief Adiciona um novo vértice a um polígono existente.
+ * @param poly Ponteiro para o polígono que será modificado.
+ * @param p O Ponto (vértice) a ser adicionado.
+ */
+void addVertexToPolygon(GfxPolygon* poly, Point p);
+
+/**
+ * @brief Desenha um polígono preenchido na tela.
+ * Inclui lógica para dar feedback visual durante a criação e para
+ * destacar o objeto quando selecionado.
+ * @param poly Ponteiro para o polígono a ser desenhado.
+ * @param is_selected Flag (1 ou 0) que indica se o polígono está selecionado.
+ */
+void drawPolygon(GfxPolygon* poly, int is_selected);
+
+/**
+ * @brief Libera a memória interna de um Polígono, se houver.
+ * Mantida para consistência com a API de gerenciamento de objetos.
+ * @param poly Ponteiro para a estrutura GfxPolygon.
+ */
+void freePolygon(GfxPolygon* poly);
 
 #endif // POLYGON_H
