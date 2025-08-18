@@ -36,10 +36,34 @@ static int selectPolygon(GfxPolygon* poly, Point p) {
     for (int i = 0; i < poly->numVertices; i++) {
         Point p1 = poly->vertices[i];
         Point p2 = poly->vertices[(i + 1) % poly->numVertices];
-        if (((p1.y <= p.y && p.y < p2.y) || (p2.y <= p.y && p.y < p1.y)) &&
-            (p.x < (p2.x - p1.x) * (p.y - p1.y) / (p2.y - p1.y) + p1.x)) {
+
+        if(((p1.y > p.y) && (p2.y > p.y))){
+            continue;
+        }
+        if(((p1.y < p.y) && (p2.y < p.y))){
+            continue;
+        }
+        if(((p1.x < p.x) && (p2.x < p.x))){
+            continue;
+        }
+        if(((p1.x > p.x && p2.x > p.x) && ((p1.y > p.y && p2.y < p.y) || (p1.y < p.y && p2.y > p.y)))){
+            crossings++;
+            continue;
+        }
+        if(((p1.y == p2.y) && (p1.y == p.y))){
+            continue;
+        }
+
+        float xi = p1.x + (p.y - p1.y)*(p2.x - p1.x) / (p2.y - p1.y);
+
+        if(xi> p.x){
             crossings++;
         }
+
+        /*if (((p1.y <= p.y && p.y < p2.y) || (p2.y <= p.y && p.y < p1.y)) &&
+            (p.x < (p2.x - p1.x) * (p.y - p1.y) / (p2.y - p1.y) + p1.x)) {
+            crossings++;
+        }*/
     }
     return crossings % 2; // Ímpar = dentro, Par = fora.
 }
