@@ -103,6 +103,22 @@ void scaleObject(int objectIndex, float sx, float sy) {
     // 2. Criar as matrizes de translação para a origem, escala e translação de volta.
     // 3. Multiplicá-las para obter a matriz composta M = T * S * T_inv.
     // 4. Aplicar a matriz M a todos os vértices do objeto.
+    if (objectIndex < 0 || objectIndex >= g_numObjects) {
+        return;
+    }
+    Object* obj = &g_objects[objectIndex];
+
+    // 2. Calcular o centro do objeto (usando a declaração correta)
+    Point center = getObjectCenter(obj);
+    Point *p = (Point*)obj->data;
+    float x = p-> x - center.x;
+    float y = p-> y - center.y;
+
+    x *= sx;
+    y *= sy;
+
+    p->x = x + center.x;
+    p->y = y + center.y;
     printf("Função scaleObject chamada para o objeto %d com fatores (%.1f, %.1f)\n", objectIndex, sx, sy);
 }
 
