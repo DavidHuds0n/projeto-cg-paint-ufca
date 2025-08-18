@@ -117,7 +117,7 @@
 	"objects.h"
 	<stdio.h>
 
-1755470342 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\input.c
+1755534335 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\input.c
 	<GL/glut.h>
 	<stdio.h>
 	<stdlib.h>
@@ -132,7 +132,7 @@
 
 1755470426 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\config.h
 
-1755451686 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\input.h
+1755533465 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\input.h
 	"point.h"
 	"config.h"
 	"polygon.h"
@@ -209,7 +209,7 @@
 	"segment.h"
 	"point.h"
 
-1755383869 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\transformations.c
+1755525832 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\transformations.c
 	<stdio.h>
 	<math.h>
 	"transformations.h"
@@ -219,7 +219,7 @@
 	"polygon.h"
 	"utils.h"
 
-1755450331 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\utils.c
+1755475035 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\utils.c
 	"utils.h"
 	"segment.h"
 	"polygon.h"

@@ -9,18 +9,26 @@
 #include "config.h"
 #include "polygon.h"
 
-// Enumeração para os diferentes modos de operação do programa.
+// Enumeração expandida para todos os modos de operação do programa.
 typedef enum {
     MODE_CREATE_POINT,
     MODE_CREATE_SEGMENT,
     MODE_CREATE_POLYGON,
-    MODE_SELECT
+    MODE_SELECT,
+    MODE_TRANSLATE,
+    MODE_ROTATE,
+    MODE_SCALE,
+    MODE_SHEAR,
+    MODE_REFLECT
 } ProgramMode;
 
 
 // --- Variáveis Globais de Estado ---
 extern ProgramMode g_currentMode;
+
+// Variáveis para a funcionalidade de "Arrastar e Soltar" (Drag-and-Drop).
 extern int g_isDragging;
+extern Point g_lastMousePos;
 
 // Variáveis de estado para a criação de objetos.
 extern int g_segmentClickCount;
@@ -28,42 +36,16 @@ extern Point g_segmentP1;
 extern Point g_polygonVertices[];
 extern int g_polygonVertexCount;
 
-// Variáveis de estado para o mouse.
-extern Point g_lastMousePos;
-extern Point g_currentMousePos; // Armazena a posição atual do mouse (para rubber banding).
+// Armazena a posição atual do mouse (para rubber banding).
+extern Point g_currentMousePos;
 
 
 // --- Protótipos das Funções de Callback ---
 
-/**
- * @brief Callback do GLUT para eventos de teclas normais do teclado.
- * @param key O código ASCII da tecla pressionada.
- * @param x A coordenada X do mouse no momento em que a tecla foi pressionada.
- * @param y A coordenada Y do mouse no momento em que a tecla foi pressionada.
- */
 void keyboardCallback(unsigned char key, int x, int y);
-
-/**
- * @brief Callback do GLUT para eventos de clique do mouse.
- * @param button O botão que foi pressionado (ex: GLUT_LEFT_BUTTON).
- * @param state O estado do botão (GLUT_DOWN ou GLUT_UP).
- * @param x A coordenada X do mouse.
- * @param y A coordenada Y do mouse.
- */
 void mouseCallback(int button, int state, int x, int y);
-
-/**
- * @brief Callback do GLUT para eventos de movimento do mouse enquanto um botão está pressionado.
- * @param x A coordenada X atual do mouse.
- * @param y A coordenada Y atual do mouse.
- */
 void motionCallback(int x, int y);
-
-/**
- * @brief Callback do GLUT para eventos de movimento do mouse SEM um botão estar pressionado.
- * @param x A coordenada X atual do mouse.
- * @param y A coordenada Y atual do mouse.
- */
 void passiveMotionCallback(int x, int y);
+void specialKeysCallback(int key, int x, int y);
 
 #endif // INPUT_H

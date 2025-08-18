@@ -48,14 +48,37 @@ int main(int argc, char **argv) {
     glutMotionFunc(motionCallback);
     glutPassiveMotionFunc(passiveMotionCallback);
 
-    printf("\n--- Rabisquim - Instruções ---\n");
-    printf("Pressione 'P': Modo Criar Pontos\n");
-    printf("Pressione 'L': Modo Criar Segmentos\n");
-    printf("Pressione 'O': Modo Criar Polígonos\n");
-    printf("Pressione 'S': Modo Seleção\n");
-    printf("Pressione 'DEL': Excluir objeto selecionado\n");
-    printf("Pressione 'ESC': Sair do programa\n");
-    printf("------------------------------\n");
+    // Adicionado para capturar teclas especiais como as setas
+    glutSpecialFunc(specialKeysCallback);
+
+
+    // --- INSTRUÇÕES ATUALIZADAS E COMPLETAS ---
+    printf("\n======================= Rabisquim - Instrucoes =======================\n\n");
+
+    printf("--- Criacao de Objetos ---\n");
+    printf("  'p' -> Modo Criar Ponto: Clique com o botao esquerdo para criar.\n");
+    printf("  'l' -> Modo Criar Segmento: Clique 2 vezes para definir o inicio e o fim.\n");
+    printf("  'o' -> Modo Criar Poligono: Clique para adicionar vertices. Botao direito para finalizar.\n\n");
+
+    printf("--- Selecao e Edicao Basica ---\n");
+    printf("  's' -> Modo de Selecao: Clique em um objeto para seleciona-lo.\n");
+    printf("  't' -> Transladar (Mover): Com um objeto selecionado, entre neste modo e arraste-o.\n");
+    printf("  'DEL' -> Excluir: Apaga o objeto que estiver selecionado.\n\n");
+
+    printf("--- Transformacoes (com um objeto selecionado) ---\n");
+    printf("  'r' -> Entrar no modo Rotacao.\n");
+    printf("         -> No modo Rotacao, use as SETAS ESQUERDA/DIREITA do teclado para girar.\n");
+    printf("  'e' -> Entrar no modo Escala.\n");
+    printf("         -> No modo Escala, use as teclas '+' e '-' para aumentar ou diminuir.\n");
+    printf("  'm' -> Entrar no modo Reflexao (Espelho).\n");
+    printf("         -> No modo Reflexao, pressione 'x' ou 'y' para refletir no eixo.\n");
+    printf("  'h' -> Entrar no modo Cisalhamento (Shear).\n\n");
+
+    printf("--- Controles Gerais ---\n");
+    printf("  'ESC' -> Sair do programa.\n\n");
+
+    printf("======================================================================\n");
+
 
     glutMainLoop();
 
