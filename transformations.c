@@ -110,15 +110,19 @@ void scaleObject(int objectIndex, float sx, float sy) {
 
     // 2. Calcular o centro do objeto (usando a declaração correta)
     Point center = getObjectCenter(obj);
-    Point *p = (Point*)obj->data;
-    float x = p-> x - center.x;
-    float y = p-> y - center.y;
+    Point *vertices = (Point*)obj->data;
+    for (int i = 0; i < obj->num_vertices; i++) {
+        // Pega o vértice atual
+        Point* p = &vertices[i];
+        float x = p-> x - center.x;
+        float y = p-> y - center.y;
 
-    x *= sx;
-    y *= sy;
+        x *= sx;
+        y *= sy;
 
-    p->x = x + center.x;
-    p->y = y + center.y;
+        p->x = x + center.x;
+        p->y = y + center.y;
+    }
     printf("Função scaleObject chamada para o objeto %d com fatores (%.1f, %.1f)\n", objectIndex, sx, sy);
 }
 
