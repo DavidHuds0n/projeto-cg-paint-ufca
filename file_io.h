@@ -4,6 +4,8 @@
 
 #ifndef FILE_IO_H
 #define FILE_IO_H
+#include <stdlib.h>
+#include <stdio.h>
 
 /**
  * @brief Salva todos os objetos da cena atual em um arquivo de texto.

@@ -15,6 +15,7 @@
 #include "segment.h"
 #include "polygon.h"
 #include "transformations.h"
+#include "file_io.h"
 
 // --- Definição das Variáveis Globais de Estado ---
 ProgramMode g_currentMode = MODE_SELECT;
@@ -253,6 +254,15 @@ void keyboardCallback(unsigned char key, int x, int y) {
 }
 
 void specialKeysCallback(int key, int x, int y) {
+    if (key == GLUT_KEY_F5){
+        saveSceneToFile("scene.txt");
+        return;
+    }
+    if (key == GLUT_KEY_F9){
+        loadSceneFromFile("scene.txt");
+        glutPostRedisplay();
+        return;
+    }
     if (g_selectedObjectIndex != -1 && g_currentMode == MODE_ROTATE) {
         switch (key) {
             case GLUT_KEY_LEFT:
