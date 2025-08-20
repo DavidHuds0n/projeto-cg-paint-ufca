@@ -152,11 +152,11 @@
 1755447333 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\segment.h
 	"point.h"
 
-1755383847 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\transformations.h
+1755713214 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\transformations.h
 	"objects.h"
 	"point.h"
 
-1755468453 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\main.c
+1755534633 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\main.c
 	<GL/glut.h>
 	<stdio.h>
 	<stdlib.h>
