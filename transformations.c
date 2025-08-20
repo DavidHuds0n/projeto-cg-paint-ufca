@@ -53,13 +53,27 @@ Matrix3x3 createScaleMatrix(float sx, float sy) {
  * @brief Cria uma matriz de rotação 2D.
  * @param angleDegrees O ângulo de rotação em graus. A função deverá converter para radianos.
  */
-Matrix3x3 createRotationMatrix(float angleDegrees) {
-    // TODO: Implementar a criação da matriz de rotação.
-    // Lembre-se de converter o ângulo de graus para radianos antes de usar sin() e cos().
-    // float rad = angleDegrees * M_PI / 180.0f;
-    // mat.m[0][0] = cos(rad); mat.m[0][1] = -sin(rad);
-    // mat.m[1][0] = sin(rad); mat.m[1][1] = cos(rad);
-    return createIdentityMatrix(); // Retorno temporário para não quebrar a compilação.
+Matrix3x3 createRotationMatrix(float angle){
+    Matrix3x3 result;
+
+    float rad = angle * M_PI / 180.0f;
+
+    // Coluna 1:
+    result.m[0][0] = cosf(rad);
+    result.m[1][0] = sinf(rad);
+    result.m[2][0] = 0.0;
+
+    // Coluna 2:
+    result.m[0][1] = -sinf(rad);
+    result.m[1][1] = cosf(rad);
+    result.m[2][1] = 0.0;
+
+    // Coluna 3:
+    result.m[0][2] = 0.0;
+    result.m[1][2] = 0.0;
+    result.m[2][2] = 1.0;
+
+    return result;
 }
 
 /**
@@ -178,11 +192,30 @@ void scaleObject(int objectIndex, float sx, float sy) {
     applyMatrixToObject(objectIndex, finalMatrix);
 }
 
+
 void rotateObject(int objectIndex, float angle) {
-    // TODO: Implementar a rotação usando o mesmo padrão de scaleObject:
-    // 1. Calcular o centro do objeto.
-    // 2. Criar a matriz de rotação composta (T * R * T_inv).
-    // 3. Chamar applyMatrixToObject com a matriz final.
+    // TODO: Implementar a lógica de Rotação aqui.
+    // 1. Calcular o centro do objeto (criar e usar uma função de 'utils.c').
+    // 2. Criar a matriz de translação para a origem T(-cx, -cy).
+    // 3. Criar a matriz de rotação R(angle).
+    // 4. Criar a matriz de translação de volta T(cx, cy).
+    // 5. Multiplicar as matrizes para obter a matriz composta M = T * R * T_inv.
+    // 6. Levar o objeto ao centro para realizar a rotação.
+    // 7. Aplicar a matriz M a todos os vértices do objeto.
+    // 8. Voltar o objeto ao seu ponto.
+
+    Point objectCenter = getObjectCenter(&g_objects[objectIndex]);
+    Matrix3x3 translationMatrix = createTranslationMatrix(-objectCenter.x, -objectCenter.y);
+    Matrix3x3 rotationMatrix = createRotationMatrix(angle);
+    Matrix3x3 translationMatrixInv = createTranslationMatrix(objectCenter.x, objectCenter.y);
+    Matrix3x3 compositeMatrix = multiplyMatrices(rotationMatrix, translationMatrix);
+    compositeMatrix = multiplyMatrices(translationMatrixInv, compositeMatrix);
+    Point location = (&g_objects[objectIndex]).
+    translateObject(objectIndex, 0, 0);
+    applyMatrixToObject(objectIndex, compositeMatrix);
+
+
+
     printf("Função rotateObject chamada para o objeto %d com ângulo %.1f\n", objectIndex, angle);
 }
 

@@ -7,6 +7,7 @@
 #include "segment.h"
 #include "polygon.h"
 #include <stdio.h>
+#include <string.h>
 
 void saveSceneToFile(const char* filename) {
     // TODO: Implementar a lógica de salvamento.
