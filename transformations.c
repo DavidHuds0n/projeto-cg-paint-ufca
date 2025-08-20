@@ -194,15 +194,6 @@ void scaleObject(int objectIndex, float sx, float sy) {
 
 
 void rotateObject(int objectIndex, float angle) {
-    // TODO: Implementar a lógica de Rotação aqui.
-    // 1. Calcular o centro do objeto (criar e usar uma função de 'utils.c').
-    // 2. Criar a matriz de translação para a origem T(-cx, -cy).
-    // 3. Criar a matriz de rotação R(angle).
-    // 4. Criar a matriz de translação de volta T(cx, cy).
-    // 5. Multiplicar as matrizes para obter a matriz composta M = T * R * T_inv.
-    // 6. Levar o objeto ao centro para realizar a rotação.
-    // 7. Aplicar a matriz M a todos os vértices do objeto.
-    // 8. Voltar o objeto ao seu ponto.
 
     Point objectCenter = getObjectCenter(&g_objects[objectIndex]);
     Matrix3x3 translationMatrix = createTranslationMatrix(-objectCenter.x, -objectCenter.y);
@@ -210,11 +201,7 @@ void rotateObject(int objectIndex, float angle) {
     Matrix3x3 translationMatrixInv = createTranslationMatrix(objectCenter.x, objectCenter.y);
     Matrix3x3 compositeMatrix = multiplyMatrices(rotationMatrix, translationMatrix);
     compositeMatrix = multiplyMatrices(translationMatrixInv, compositeMatrix);
-    Point location = (&g_objects[objectIndex]).
-    translateObject(objectIndex, 0, 0);
     applyMatrixToObject(objectIndex, compositeMatrix);
-
-
 
     printf("Função rotateObject chamada para o objeto %d com ângulo %.1f\n", objectIndex, angle);
 }

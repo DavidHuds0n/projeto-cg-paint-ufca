@@ -270,10 +270,12 @@ void specialKeysCallback(int key, int x, int y) {
     if (g_selectedObjectIndex != -1 && g_currentMode == MODE_ROTATE) {
         switch (key) {
             case GLUT_KEY_LEFT:
-                printf("Ação: Rotação Esquerda (ainda não implementado)\n");
+                printf("Ação: Rotação Esquerda\n");
+                rotateObject(g_selectedObjectIndex, 5);
                 break;
             case GLUT_KEY_RIGHT:
-                printf("Ação: Rotação Direita (ainda não implementado)\n");
+                printf("Ação: Rotação Direita\n");
+                rotateObject(g_selectedObjectIndex, -5);
                 break;
         }
         glutPostRedisplay();

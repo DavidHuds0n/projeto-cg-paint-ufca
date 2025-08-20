@@ -6,6 +6,13 @@
 // - Registrar as funções de callback para eventos de display, teclado e mouse.
 // - Gerenciar o loop principal de eventos e a limpeza de recursos ao final.
 
+
+/* IGNORE
+cd /home/vic/Documentos/GitHub/projeto-cg-paint-ufca/
+gcc *.c -o Rabisquim -lGL -lGLU -lglut -lm
+./Rabisquim
+*/
+
 #include <GL/glut.h>
 #include <stdio.h>
 #include <stdlib.h>
