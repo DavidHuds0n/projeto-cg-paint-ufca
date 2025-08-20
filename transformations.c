@@ -51,7 +51,7 @@ Matrix3x3 multiplyMatrices(Matrix3x3 m1, Matrix3x3 m2) {
     return result;
 }
 
-Matrix3x3 createRotationMatrix(float angle){
+Matrix3x3 rotationMatrix(float angle){
     Matrix3x3 result;
     // Coluna 1:
     result.m[0][0] = cosf(angle);
@@ -107,16 +107,10 @@ void translateObject(int objectIndex, float dx, float dy) {
 void rotateObject(int objectIndex, float angle) {
     // TODO: Implementar a lógica de Rotação aqui.
     // 1. Calcular o centro do objeto (criar e usar uma função de 'utils.c').
-    Point objectCenter = getObjectCenter(objectIndex);
     // 2. Criar a matriz de translação para a origem T(-cx, -cy).
-    Matrix3x3 translationMatrix = createTranslationMatrix(-objectCenter.x, -objectCenter.y);
     // 3. Criar a matriz de rotação R(angle).
-    Matrix3x3 rotationMatrix = createRotationMatrix(angle);
     // 4. Criar a matriz de translação de volta T(cx, cy).
-    Matrix3x3 translationMatrix2 = createTranslationMatrix(objectCenter.x, objectCenter.y)
     // 5. Multiplicar as matrizes para obter a matriz composta M = T * R * T_inv.
-    Matrix3x3 compositeMatrix = multiplyMatrices(translationMatrix, rotationMatrix);
-    compositeMatrix = multiplyMatrices(compositeMatrix, translationMatrix2)
     // 6. Aplicar a matriz M a todos os vértices do objeto.
     printf("Função rotateObject chamada para o objeto %d com ângulo %.1f\n", objectIndex, angle);
 }
