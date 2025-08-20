@@ -32,7 +32,7 @@ O usuário pode criar os seguintes objetos primários, definindo quais e quantas
 ### 4. Transformações Geométricas
 As seguintes transformações podem ser aplicadas aos objetos selecionados:
 - ✅ **Translação:** Implementada com a funcionalidade de "Arrastar e Soltar".
-- 🚧 **Rotação:** Realizada em relação ao centro do objeto.
+- ✅ **Rotação:** Realizada em relação ao centro do objeto.
 - 🚧 **Escala:** Realizada em relação ao centro do objeto.
 - 🚧 **Reflexão**
 - 🚧 **Cisalhamento**
