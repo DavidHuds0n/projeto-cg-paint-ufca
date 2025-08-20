@@ -1,8 +1,8 @@
 // transformations.c
 /**
  * @file transformations.c
- * @brief ImplementaÁ„o das funÁıes de transformaÁıes geomÈtricas e manipulaÁ„o de matrizes.
- * ContÈm a lÛgica matem·tica para criar e aplicar matrizes de transformaÁ„o aos objetos da cena.
+ * @brief Implementa√ß√£o das fun√ß√µes de transforma√ß√µes geom√©tricas e manipula√ß√£o de matrizes.
+ * Cont√©m a l√≥gica matem√°tica para criar e aplicar matrizes de transforma√ß√£o aos objetos da cena.
  */
 
 #include <stdio.h>
@@ -12,9 +12,9 @@
 #include "point.h"
 #include "segment.h"
 #include "polygon.h"
-#include "utils.h" // Necess·rio para getObjectCenter()
+#include "utils.h" // Necess√°rio para getObjectCenter()
 
-// --- FunÁıes Auxiliares para CriaÁ„o de Matrizes ---
+// --- Fun√ß√µes Auxiliares para Cria√ß√£o de Matrizes ---
 
 /**
  * @brief Cria e retorna uma matriz identidade 3x3.
@@ -30,7 +30,7 @@ Matrix3x3 createIdentityMatrix() {
 }
 
 /**
- * @brief Cria uma matriz de translaÁ„o 2D.
+ * @brief Cria uma matriz de transla√ß√£o 2D.
  */
 Matrix3x3 createTranslationMatrix(float tx, float ty) {
     Matrix3x3 mat = createIdentityMatrix();
@@ -50,42 +50,42 @@ Matrix3x3 createScaleMatrix(float sx, float sy) {
 }
 
 /**
- * @brief Cria uma matriz de rotaÁ„o 2D.
- * @param angleDegrees O ‚ngulo de rotaÁ„o em graus. A funÁ„o dever· converter para radianos.
+ * @brief Cria uma matriz de rota√ß√£o 2D.
+ * @param angleDegrees O √¢ngulo de rota√ß√£o em graus. A fun√ß√£o dever√° converter para radianos.
  */
 Matrix3x3 createRotationMatrix(float angleDegrees) {
-    // TODO: Implementar a criaÁ„o da matriz de rotaÁ„o.
-    // Lembre-se de converter o ‚ngulo de graus para radianos antes de usar sin() e cos().
+    // TODO: Implementar a cria√ß√£o da matriz de rota√ß√£o.
+    // Lembre-se de converter o √¢ngulo de graus para radianos antes de usar sin() e cos().
     // float rad = angleDegrees * M_PI / 180.0f;
     // mat.m[0][0] = cos(rad); mat.m[0][1] = -sin(rad);
     // mat.m[1][0] = sin(rad); mat.m[1][1] = cos(rad);
-    return createIdentityMatrix(); // Retorno tempor·rio para n„o quebrar a compilaÁ„o.
+    return createIdentityMatrix(); // Retorno tempor√°rio para n√£o quebrar a compila√ß√£o.
 }
 
 /**
- * @brief Cria uma matriz de reflex„o (espelhamento) 2D.
- * @param axis O eixo de reflex„o. Use 0 para refletir sobre o eixo X e 1 para o eixo Y.
+ * @brief Cria uma matriz de reflex√£o (espelhamento) 2D.
+ * @param axis O eixo de reflex√£o. Use 0 para refletir sobre o eixo X e 1 para o eixo Y.
  */
 Matrix3x3 createReflectionMatrix(int axis) {
-    // TODO: Implementar a criaÁ„o da matriz de reflex„o.
+    // TODO: Implementar a cria√ß√£o da matriz de reflex√£o.
     // Se axis for 0 (eixo X), sy = -1. Se for 1 (eixo Y), sx = -1.
-    return createIdentityMatrix(); // Retorno tempor·rio.
+    return createIdentityMatrix(); // Retorno tempor√°rio.
 }
 
 /**
  * @brief Cria uma matriz de cisalhamento (shear) 2D.
- * @param shx Fator de cisalhamento na direÁ„o X.
- * @param shy Fator de cisalhamento na direÁ„o Y.
+ * @param shx Fator de cisalhamento na dire√ß√£o X.
+ * @param shy Fator de cisalhamento na dire√ß√£o Y.
  */
 Matrix3x3 createShearMatrix(float shx, float shy) {
-    // TODO: Implementar a criaÁ„o da matriz de cisalhamento.
+    // TODO: Implementar a cria√ß√£o da matriz de cisalhamento.
     // mat.m[0][1] = shx;
     // mat.m[1][0] = shy;
-    return createIdentityMatrix(); // Retorno tempor·rio.
+    return createIdentityMatrix(); // Retorno tempor√°rio.
 }
 
 
-// --- FunÁıes de LÛgica e AplicaÁ„o de Matrizes ---
+// --- Fun√ß√µes de L√≥gica e Aplica√ß√£o de Matrizes ---
 
 Point multiplyMatrixByPoint(Matrix3x3 mat, Point p) {
     Point transformedP;
@@ -107,12 +107,31 @@ Matrix3x3 multiplyMatrices(Matrix3x3 m1, Matrix3x3 m2) {
     return result;
 }
 
-/**
- * @brief FunÁ„o central que aplica uma matriz de transformaÁ„o a um objeto.
- * Esta funÁ„o age como um "dispatcher", contendo a lÛgica para identificar o tipo
- * do objeto e aplicar a matriz de forma adequada a todos os seus vÈrtices.
- */
-void applyMatrixToObject(int objectIndex, Matrix3x3 matrix) {
+Matrix3x3 createRotationMatrix(float angle){
+    Matrix3x3 result;
+  
+    float rad = angle * M_PI / 180.0f;
+  
+    // Coluna 1:
+    result.m[0][0] = cosf(rad);
+    result.m[1][0] = sinf(rad);
+    result.m[2][0] = 0.0;
+
+    // Coluna 2:
+    result.m[0][1] = -sinf(rad);
+    result.m[1][1] = cosf(rad);
+    result.m[2][1] = 0.0;
+
+    // Coluna 3:
+    result.m[0][2] = 0.0;
+    result.m[1][2] = 0.0;
+    result.m[2][2] = 1.0;
+
+    return result;
+}
+
+
+void translateObject(int objectIndex, float dx, float dy) {
     if (objectIndex < 0 || objectIndex >= g_numObjects) {
         return;
     }
@@ -139,63 +158,78 @@ void applyMatrixToObject(int objectIndex, Matrix3x3 matrix) {
     }
 }
 
-
-// --- FunÁıes de TransformaÁ„o (Interface P˙blica) ---
-// Estas s„o as funÁıes que devem ser chamadas por outros mÛdulos (como input.c).
+void rotateObject(int objectIndex, float angle) {
+    // TODO: Implementar a l√≥gica de Rota√ß√£o aqui.
+    // 1. Calcular o centro do objeto (criar e usar uma fun√ß√£o de 'utils.c').
+    Point objectCenter = getObjectCenter(objectIndex);
+    // 2. Criar a matriz de transla√ß√£o para a origem T(-cx, -cy).
+    Matrix3x3 translationMatrix = createTranslationMatrix(-objectCenter.x, -objectCenter.y);
+    // 3. Criar a matriz de rota√ß√£o R(angle).
+    Matrix3x3 rotationMatrix = createRotationMatrix(angle);
+    // 4. Criar a matriz de transla√ß√£o de volta T(cx, cy).
+    Matrix3x3 translationMatrixInv = createTranslationMatrix(objectCenter.x, objectCenter.y)
+    // 5. Multiplicar as matrizes para obter a matriz composta M = T * R * T_inv.
+    Matrix3x3 compositeMatrix = multiplyMatrices(rotationMatrix, translationMatrix);
+    compositeMatrix = multiplyMatrices(translationMatrixInv, compositeMatrix);
+    // 6. Aplicar a matriz M a todos os v√©rtices do objeto.
+    ...
+    printf("Fun√ß√£o rotateObject chamada para o objeto %d com √¢ngulo %.1f\n", objectIndex, angle);
+}
 
 void translateObject(int objectIndex, float dx, float dy) {
-    // Cl·usula de guarda para garantir que o Ìndice È v·lido.
+    // Cl√°usula de guarda para garantir que o √≠ndice √© v√°lido.
     if (objectIndex < 0 || objectIndex >= g_numObjects) {
         return;
     }
 
-    // 1. Cria a matriz especÌfica para esta transformaÁ„o.
+    // 1. Cria a matriz espec√≠fica para esta transforma√ß√£o.
     Matrix3x3 translationMatrix = createTranslationMatrix(dx, dy);
 
-    // 2. Delega a aplicaÁ„o da matriz ‡ funÁ„o central.
+    // 2. Delega a aplica√ß√£o da matriz √† fun√ß√£o central.
     applyMatrixToObject(objectIndex, translationMatrix);
+
 }
 
 void scaleObject(int objectIndex, float sx, float sy) {
-    // Cl·usula de guarda para garantir que o Ìndice È v·lido ANTES de us·-lo.
+    // Cl√°usula de guarda para garantir que o √≠ndice √© v√°lido ANTES de us√°-lo.
     if (objectIndex < 0 || objectIndex >= g_numObjects) {
         return;
     }
 
-    // 1. Para uma escala correta, a transformaÁ„o È aplicada em relaÁ„o ao centro do objeto.
+    // 1. Para uma escala correta, a transforma√ß√£o √© aplicada em rela√ß√£o ao centro do objeto.
     Point center = getObjectCenter(&g_objects[objectIndex]);
 
-    // 2. A matriz final È uma composiÁ„o de trÍs transformaÁıes: T(c) * S(sx,sy) * T(-c)
+    // 2. A matriz final √© uma composi√ß√£o de tr√™s transforma√ß√µes: T(c) * S(sx,sy) * T(-c)
     Matrix3x3 toOriginMatrix = createTranslationMatrix(-center.x, -center.y);
     Matrix3x3 scaleMatrix = createScaleMatrix(sx, sy);
     Matrix3x3 fromOriginMatrix = createTranslationMatrix(center.x, center.y);
 
-    // 3. Multiplica as matrizes na ordem correta (a primeira a ser aplicada fica ‡ direita).
+    // 3. Multiplica as matrizes na ordem correta (a primeira a ser aplicada fica √† direita).
     Matrix3x3 tempMatrix = multiplyMatrices(scaleMatrix, toOriginMatrix);
     Matrix3x3 finalMatrix = multiplyMatrices(fromOriginMatrix, tempMatrix);
 
-    // 4. Delega a aplicaÁ„o da matriz final ‡ funÁ„o central.
+    // 4. Delega a aplica√ß√£o da matriz final √† fun√ß√£o central.
     applyMatrixToObject(objectIndex, finalMatrix);
 }
 
 void rotateObject(int objectIndex, float angle) {
-    // TODO: Implementar a rotaÁ„o usando o mesmo padr„o de scaleObject:
+    // TODO: Implementar a rota√ß√£o usando o mesmo padr√£o de scaleObject:
     // 1. Calcular o centro do objeto.
-    // 2. Criar a matriz de rotaÁ„o composta (T * R * T_inv).
+    // 2. Criar a matriz de rota√ß√£o composta (T * R * T_inv).
     // 3. Chamar applyMatrixToObject com a matriz final.
-    printf("FunÁ„o rotateObject chamada para o objeto %d com ‚ngulo %.1f\n", objectIndex, angle);
+    printf("Fun√ß√£o rotateObject chamada para o objeto %d com √¢ngulo %.1f\n", objectIndex, angle);
 }
 
 void reflectObject(int objectIndex, int axis) {
-    // TODO: Implementar a reflex„o:
-    // 1. Criar a matriz de reflex„o apropriada.
+    // TODO: Implementar a reflex√£o:
+    // 1. Criar a matriz de reflex√£o apropriada.
     // 2. Chamar applyMatrixToObject.
-    printf("FunÁ„o reflectObject chamada para o objeto %d no eixo %d\n", objectIndex, axis);
+    printf("Fun√ß√£o reflectObject chamada para o objeto %d no eixo %d\n", objectIndex, axis);
 }
 
 void shearObject(int objectIndex, float shx, float shy) {
     // TODO: Implementar o cisalhamento:
     // 1. Criar a matriz de cisalhamento.
     // 2. Chamar applyMatrixToObject.
-    printf("FunÁ„o shearObject chamada para o objeto %d com fatores (%.1f, %.1f)\n", objectIndex, shx, shy);
+    printf("Fun√ß√£o shearObject chamada para o objeto %d com fatores (%.1f, %.1f)\n", objectIndex, shx, shy);
 }
