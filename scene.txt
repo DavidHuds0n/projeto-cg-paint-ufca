@@ -1,0 +1,12 @@
+[PONTOS]
+Cont: 0
+
+[LINHAS]
+Cont: 0
+
+[POLIGONOS]
+Cont: 1
+Poligono 0 - Pontas: 3
+  V0: 250.00, 442.00
+  V1: 320.00, 335.00
+  V2: 400.00, 448.00
