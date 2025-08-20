@@ -51,25 +51,6 @@ Matrix3x3 multiplyMatrices(Matrix3x3 m1, Matrix3x3 m2) {
     return result;
 }
 
-Matrix3x3 rotationMatrix(float angle){
-    Matrix3x3 result;
-    // Coluna 1:
-    result.m[0][0] = cosf(angle);
-    result.m[1][0] = sinf(angle);
-    result.m[2][0] = 0.0;
-
-    // Coluna 2:
-    result.m[0][1] = -sinf(angle);
-    result.m[1][1] = cosf(angle);
-    result.m[2][1] = 0.0;
-
-    // Coluna 3:
-    result.m[0][2] = 0.0;
-    result.m[1][2] = 0.0;
-    result.m[2][2] = 1.0;
-
-    return result;
-}
 
 // --- Implementação das Funções de Transformação ---
 
