@@ -15,7 +15,6 @@
 #include "segment.h"
 #include "polygon.h"
 #include "transformations.h"
-#include "file_io.h"
 
 // --- Definição das Variáveis Globais de Estado ---
 ProgramMode g_currentMode = MODE_SELECT;
@@ -193,6 +192,8 @@ void keyboardCallback(unsigned char key, int x, int y) {
             if (objectIsSelected) g_currentMode = MODE_SHEAR;
             else printf("[DEBUG] Não é possível entrar no modo SHEAR: nenhum objeto selecionado!\n");
             break;
+
+        // NOVO: Tecla 'm' para entrar no modo de Reflexão
         case 'm': case 'M': // 'M' de Mirror (Espelho/Reflexão)
             if (objectIsSelected) g_currentMode = MODE_REFLECT;
             else printf("[DEBUG] Não é possível entrar no modo REFLECT: nenhum objeto selecionado!\n");
@@ -200,6 +201,7 @@ void keyboardCallback(unsigned char key, int x, int y) {
 
         // --- AÇÕES DENTRO DE MODOS ESPECÍFICOS ---
 
+        // MODIFICADO: Ação de refletir agora só funciona no modo REFLECT
         case 'x': case 'X':
             if (objectIsSelected && g_currentMode == MODE_REFLECT) {
                 printf("[DEBUG] Reflexão em X aplicada ao objeto %d\n", g_selectedObjectIndex);
@@ -222,18 +224,10 @@ void keyboardCallback(unsigned char key, int x, int y) {
             break;
 
         case '=':
-            if (objectIsSelected && g_currentMode == MODE_SCALE) {
-                // Aumenta o tamanho do objeto em 10%
-                scaleObject(g_selectedObjectIndex, 1.1f, 1.1f);
-                glutPostRedisplay(); // Essencial: Pede para a tela ser redesenhada!
-            }
+            if (objectIsSelected && g_currentMode == MODE_SCALE) printf("Ação: Escala + (ainda não implementado)\n");
             break;
         case '-':
-            if (objectIsSelected && g_currentMode == MODE_SCALE) {
-                // Diminui o tamanho do objeto em 10%
-                scaleObject(g_selectedObjectIndex, 0.9f, 0.9f);
-                glutPostRedisplay(); // Essencial: Pede para a tela ser redesenhada!
-            }
+            if (objectIsSelected && g_currentMode == MODE_SCALE) printf("Ação: Escala - (ainda não implementado)\n");
             break;
 
         case 127: // Tecla DELETE
@@ -248,25 +242,17 @@ void keyboardCallback(unsigned char key, int x, int y) {
         printf("[DEBUG] Modo alterado de %s para %s\n", getModeString(oldMode), getModeString(g_currentMode));
         g_segmentClickCount = 0;
         g_polygonVertexCount = 0;
+        // Importante: NÃO resetar seleção ao entrar em modos de transformação
         if (g_currentMode == MODE_SELECT || g_currentMode == MODE_CREATE_POINT ||
             g_currentMode == MODE_CREATE_SEGMENT || g_currentMode == MODE_CREATE_POLYGON) {
              g_selectedObjectIndex = -1;
-             g_isDragging = 0;
+             g_isDragging = 0; // Para qualquer operação de drag em andamento
         }
     }
     glutPostRedisplay();
 }
 
 void specialKeysCallback(int key, int x, int y) {
-    if (key == GLUT_KEY_F5){
-        saveSceneToFile("scene.txt");
-        return;
-    }
-    if (key == GLUT_KEY_F9){
-        loadSceneFromFile("scene.txt");
-        glutPostRedisplay();
-        return;
-    }
     if (g_selectedObjectIndex != -1 && g_currentMode == MODE_ROTATE) {
         switch (key) {
             case GLUT_KEY_LEFT:
