@@ -204,6 +204,7 @@ void keyboardCallback(unsigned char key, int x, int y) {
             if (objectIsSelected && g_currentMode == MODE_REFLECT) {
                 printf("[DEBUG] Reflexão em X aplicada ao objeto %d\n", g_selectedObjectIndex);
                 reflectObject(g_selectedObjectIndex, 0); // Chama a função de transformação
+                glutPostRedisplay();
             } else if (objectIsSelected) {
                 printf("[AVISO] Para refletir, primeiro entre no modo de reflexão (pressione 'm').\n");
             } else {
@@ -214,6 +215,7 @@ void keyboardCallback(unsigned char key, int x, int y) {
             if (objectIsSelected && g_currentMode == MODE_REFLECT) {
                 printf("[DEBUG] Reflexão em Y aplicada ao objeto %d\n", g_selectedObjectIndex);
                 reflectObject(g_selectedObjectIndex, 1); // Chama a função de transformação
+                glutPostRedisplay();
             } else if (objectIsSelected) {
                 printf("[AVISO] Para refletir, primeiro entre no modo de reflexão (pressione 'm').\n");
             } else {
