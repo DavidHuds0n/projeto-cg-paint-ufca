@@ -81,28 +81,17 @@ Matrix3x3 createRotationMatrix(float angle){
  * @param axis O eixo de reflexão. Use 0 para refletir sobre o eixo X e 1 para o eixo Y.
  */
 Matrix3x3 createReflectionMatrix(int axis) {
-    // Se axis for 0 (eixo X), sy = -1. Se for 1 (eixo Y), sx = -1.
-    Matrix3x3 reflectionMatrix;
+    // 1. Começa com uma matriz identidade. É mais limpo e seguro.
+    Matrix3x3 mat = createIdentityMatrix();
 
-    reflectionMatrix.m[0][1] = 0;
-    reflectionMatrix.m[0][2] = 0;
-    reflectionMatrix.m[1][0] = 0;
-    reflectionMatrix.m[1][2] = 0;
-    reflectionMatrix.m[2][0] = 0;
-    reflectionMatrix.m[2][1] = 0;
-    reflectionMatrix.m[2][2] = 1;
-
-    if (axis == 0) {
-        reflectionMatrix.m[0][0] = 1;
-        reflectionMatrix.m[1][1] = -1;
+    // 2. Aplica a inversão de sinal no eixo correto.
+    if (axis == 0) { // Reflexão sobre o eixo X (inverte a coordenada Y)
+        mat.m[1][1] = -1.0f;
+    } else { // Reflexão sobre o eixo Y (inverte a coordenada X)
+        mat.m[0][0] = -1.0f;
     }
 
-    else {
-        reflectionMatrix.m[0][0] = -1;
-        reflectionMatrix.m[1][1] = 1;
-    }
-
-    return reflectionMatrix;
+    return mat;
 }
 
 /**
@@ -226,13 +215,27 @@ void rotateObject(int objectIndex, float angle) {
 }
 
 void reflectObject(int objectIndex, int axis) {
-    // Cria a matriz de reflexão para o eixo axis.
-    Matrix3x3 reflectionMatrix = createReflectionMatrix(axis);
-    // 2. Chama applyMatrixToObject para aplicar a transformação.
-    applyMatrixToObject(objectIndex, reflectionMatrix);
+    // Cláusula de guarda para garantir que o índice é válido.
+    if (objectIndex < 0 || objectIndex >= g_numObjects) {
+        return;
+    }
 
-    printf("Função reflectObject chamada para o objeto %d no eixo %d\n", objectIndex, axis);
+    // 1. Para uma reflexão local, a transformação é aplicada em relação ao centro do objeto.
+    Point center = getObjectCenter(&g_objects[objectIndex]);
+
+    // 2. A matriz final é uma composição de três transformações: T(c) * R * T(-c)
+    Matrix3x3 toOriginMatrix = createTranslationMatrix(-center.x, -center.y);
+    Matrix3x3 reflectionMatrix = createReflectionMatrix(axis); // Sua função que já está correta
+    Matrix3x3 fromOriginMatrix = createTranslationMatrix(center.x, center.y);
+
+    // 3. Multiplica as matrizes na ordem correta.
+    Matrix3x3 tempMatrix = multiplyMatrices(reflectionMatrix, toOriginMatrix);
+    Matrix3x3 finalMatrix = multiplyMatrices(fromOriginMatrix, tempMatrix);
+
+    // 4. Delega a aplicação da matriz final à função central.
+    applyMatrixToObject(objectIndex, finalMatrix);
 }
+
 
 void shearObject(int objectIndex, float shx, float shy) {
     // TODO: Implementar o cisalhamento:
