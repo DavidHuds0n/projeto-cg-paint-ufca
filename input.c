@@ -271,11 +271,11 @@ void specialKeysCallback(int key, int x, int y) {
         switch (key) {
             case GLUT_KEY_LEFT:
                 printf("Ação: Rotação Esquerda\n");
-                rotateObject(g_selectedObjectIndex, 5);
+                rotateObject(g_selectedObjectIndex, 20);
                 break;
             case GLUT_KEY_RIGHT:
                 printf("Ação: Rotação Direita\n");
-                rotateObject(g_selectedObjectIndex, -5);
+                rotateObject(g_selectedObjectIndex, -20);
                 break;
         }
         glutPostRedisplay();

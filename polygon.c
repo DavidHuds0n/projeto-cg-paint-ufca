@@ -9,6 +9,7 @@
 #include "polygon.h"
 #include "point.h"
 #include "config.h"
+#include "utils.h"
 
 
 GfxPolygon createPolygon() {
@@ -74,6 +75,33 @@ void drawPolygon(GfxPolygon* poly, int is_selected) {
     }
     glEnd();
     glPointSize(1.0f);
+
+    // ====================== MUDANÇA AQUI ======================
+    // Desenha o ponto central do polígono como um feedback visual.
+
+    // 1. Só desenha o centro se o polígono for válido (tiver pelo menos 1 vértice).
+    if (poly->numVertices > 0) {
+        // 2. Precisamos criar um objeto temporário para passar para getObjectCenter,
+        // pois ela espera um Object* e não um GfxPolygon*.
+        Object tempObj;
+        tempObj.type = OBJECT_TYPE_POLYGON;
+        tempObj.data = poly;
+
+        // 3. Calcula o centro.
+        Point center = getObjectCenter(&tempObj);
+
+        // 4. Desenha o ponto central (ex: um pequeno quadrado amarelo).
+        glColor3f(0.0f, 0.0f, 0.0f); // Cor amarela
+        glPointSize(5.0f);           // Tamanho de 5 pixels
+
+        glBegin(GL_POINTS);
+            glVertex2f(center.x, center.y);
+        glEnd();
+
+        // Reseta o tamanho do ponto para o padrão.
+        glPointSize(1.0f);
+    }
+    // ==================== FIM DA MUDANÇA ====================
 }
 
 void freePolygon(GfxPolygon* poly) {
