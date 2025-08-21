@@ -81,9 +81,28 @@ Matrix3x3 createRotationMatrix(float angle){
  * @param axis O eixo de reflexão. Use 0 para refletir sobre o eixo X e 1 para o eixo Y.
  */
 Matrix3x3 createReflectionMatrix(int axis) {
-    // TODO: Implementar a criação da matriz de reflexão.
     // Se axis for 0 (eixo X), sy = -1. Se for 1 (eixo Y), sx = -1.
-    return createIdentityMatrix(); // Retorno temporário.
+    Matrix3x3 reflectionMatrix;
+
+    reflectionMatrix.m[0][1] = 0;
+    reflectionMatrix.m[0][2] = 0;
+    reflectionMatrix.m[1][0] = 0;
+    reflectionMatrix.m[1][2] = 0;
+    reflectionMatrix.m[2][0] = 0;
+    reflectionMatrix.m[2][1] = 0;
+    reflectionMatrix.m[2][2] = 1;
+
+    if (axis == 0) {
+        reflectionMatrix.m[0][0] = 1;
+        reflectionMatrix.m[1][1] = -1;
+    }
+
+    else {
+        reflectionMatrix.m[0][0] = -1;
+        reflectionMatrix.m[1][1] = 1;
+    }
+
+    return reflectionMatrix;
 }
 
 /**
@@ -207,9 +226,11 @@ void rotateObject(int objectIndex, float angle) {
 }
 
 void reflectObject(int objectIndex, int axis) {
-    // TODO: Implementar a reflexão:
-    // 1. Criar a matriz de reflexão apropriada.
-    // 2. Chamar applyMatrixToObject.
+    // Cria a matriz de reflexão para o eixo axis.
+    Matrix3x3 reflectionMatrix = createReflectionMatrix(axis);
+    // 2. Chama applyMatrixToObject para aplicar a transformação.
+    applyMatrixToObject(objectIndex, reflectionMatrix);
+
     printf("Função reflectObject chamada para o objeto %d no eixo %d\n", objectIndex, axis);
 }
 
