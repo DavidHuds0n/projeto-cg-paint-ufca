@@ -282,6 +282,33 @@ void specialKeysCallback(int key, int x, int y) {
         }
         glutPostRedisplay();
     }
+    if (g_currentMode == MODE_SHEAR) {
+        float shearFactor = 0.1f; // Define o quanto o objeto será inclinado a cada tecla pressionada
+
+        switch (key) {
+            case GLUT_KEY_RIGHT: // Seta para a direita
+                // Aplica cisalhamento positivo em X
+                shearObject(g_selectedObjectIndex, shearFactor, 0.0f);
+                printf("[DEBUG] Shear X+ aplicado ao objeto %d\n", g_selectedObjectIndex);
+                break;
+            case GLUT_KEY_LEFT: // Seta para a esquerda
+                // Aplica cisalhamento negativo em X
+                shearObject(g_selectedObjectIndex, -shearFactor, 0.0f);
+                printf("[DEBUG] Shear X- aplicado ao objeto %d\n", g_selectedObjectIndex);
+                break;
+            case GLUT_KEY_UP: // Seta para cima
+                // Aplica cisalhamento positivo em Y
+                shearObject(g_selectedObjectIndex, 0.0f, shearFactor);
+                printf("[DEBUG] Shear Y+ aplicado ao objeto %d\n", g_selectedObjectIndex);
+                break;
+            case GLUT_KEY_DOWN: // Seta para baixo
+                // Aplica cisalhamento negativo em Y
+                shearObject(g_selectedObjectIndex, 0.0f, -shearFactor);
+                printf("[DEBUG] Shear Y- aplicado ao objeto %d\n", g_selectedObjectIndex);
+                break;
+        }
+        glutPostRedisplay(); // Pede para redesenhar a tela para ver a mudança
+    }
 }
 
 void mouseCallback(int button, int state, int x, int y) {
@@ -371,6 +398,7 @@ void mouseCallback(int button, int state, int x, int y) {
                 }
             }
         }
+
 
         glutPostRedisplay();
     }

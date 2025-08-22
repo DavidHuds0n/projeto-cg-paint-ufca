@@ -100,10 +100,10 @@ Matrix3x3 createReflectionMatrix(int axis) {
  * @param shy Fator de cisalhamento na direção Y.
  */
 Matrix3x3 createShearMatrix(float shx, float shy) {
-    // TODO: Implementar a criação da matriz de cisalhamento.
-    // mat.m[0][1] = shx;
-    // mat.m[1][0] = shy;
-    return createIdentityMatrix(); // Retorno temporário.
+    Matrix3x3 mat = createIdentityMatrix();
+    mat.m[0][1] = shx;
+    mat.m[1][0] = shy;
+    return mat;
 }
 
 
@@ -237,9 +237,28 @@ void reflectObject(int objectIndex, int axis) {
 }
 
 
+// Função principal corrigida
 void shearObject(int objectIndex, float shx, float shy) {
-    // TODO: Implementar o cisalhamento:
-    // 1. Criar a matriz de cisalhamento.
-    // 2. Chamar applyMatrixToObject.
+
+    // Cláusula de guarda para garantir que o índice é válido.
+    if (objectIndex < 0 || objectIndex >= g_numObjects) {
+        return;
+    }
+
+    // 1. Para um cisalhamento local, a transformação é aplicada em relação ao centro do objeto.
+    Point center = getObjectCenter(&g_objects[objectIndex]);
+
+    // 2. A matriz final é uma composição de três transformações: T(c) * R * T(-c)
+    Matrix3x3 toOriginMatrix = createTranslationMatrix(-center.x, -center.y);
+    // 3. Criar a matriz de cisalhamento.
+    Matrix3x3 shearMatrix = createShearMatrix(shx, shy);
+    Matrix3x3 fromOrigin = createTranslationMatrix(center.x, center.y);
+
+     // 4. Multiplica as matrizes na ordem correta.
+    Matrix3x3 tempMatrix = multiplyMatrices(shearMatrix, toOriginMatrix);
+    Matrix3x3 finalMatrix = multiplyMatrices(fromOrigin, tempMatrix);
+    // 5. Chamar applyMatrixToObject.
+    applyMatrixToObject(objectIndex, finalMatrix);
+
     printf("Função shearObject chamada para o objeto %d com fatores (%.1f, %.1f)\n", objectIndex, shx, shy);
 }
