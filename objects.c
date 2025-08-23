@@ -13,6 +13,7 @@
 #include "polygon.h"
 #include "config.h"
 #include "input.h"
+#include "animation.h"
 
 // --- Definição das Variáveis Globais ---
 Object g_objects[MAX_OBJECTS];
@@ -47,6 +48,8 @@ void removeObject(int index) {
             g_objects[i] = g_objects[i + 1];
         }
         g_numObjects--;
+        // mantém o vetor g_anim alinhado
+        anim_on_remove_compact(index);
         if (g_selectedObjectIndex == index) {
             g_selectedObjectIndex = -1;
         } else if (g_selectedObjectIndex > index) {

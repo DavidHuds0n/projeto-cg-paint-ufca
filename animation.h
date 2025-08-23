@@ -4,18 +4,27 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
-/**
- * @brief Inicia o loop de animação.
- * Deve ser chamada uma única vez na função main().
- */
+#include "config.h"
+
+typedef struct {
+    int   active;
+    float vx, vy;
+    float e;
+    int   gravity;      // 1=aplica gravidade
+    float vmax;         // clamp de velocidade (px/s)
+} AnimSlot;
+
+extern AnimSlot g_anim[MAX_OBJECTS];
+
+void anim_init_all(void);
+void anim_enable(int idx, float vx, float vy, float e, int gravity);
+void anim_disable(int idx);
+void anim_toggle_selected(void); // liga/desliga no objeto selecionado
 void startAnimation();
 
-/**
- * @brief A função de callback que o GLUT chamará periodicamente.
- * Contém a lógica que atualiza as propriedades dos objetos a cada "frame"
- * da animação (ex: mover, rotacionar, etc.).
- * @param value Um valor inteiro que pode ser usado para passar dados para o callback.
- */
-void updateAnimation(int value);
+void anim_kick_towards_mouse(float speed);
+void anim_step(float dt);
+void anim_on_remove_compact(int removed_idx); // manter alinhado com g_objects
+
 
 #endif // ANIMATION_H

@@ -25,6 +25,7 @@ gcc *.c -o Rabisquim -lGL -lGLU -lglut -lm
 #include "segment.h"
 #include "polygon.h"
 #include "transformations.h"
+#include "animation.h""
 
 void displayCallback() {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -39,6 +40,18 @@ void initOpenGL() {
     gluOrtho2D(0, WINDOW_WIDTH, 0, WINDOW_HEIGHT);
 }
 
+static void timerCallback(int value){
+    static int last = 0;
+    int now = glutGet(GLUT_ELAPSED_TIME);
+    if(last==0) last = now;
+    float dt = (now - last) / 1000.0f;
+    last = now;
+
+    anim_step(dt);          // avança as animações
+    glutPostRedisplay();    // redesenha
+    glutTimerFunc(16, timerCallback, 0); // ~60 FPS
+}
+
 int main(int argc, char **argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
@@ -47,7 +60,7 @@ int main(int argc, char **argv) {
 
     initOpenGL();
     initObjectList();
-
+    anim_init_all();
     // Registro de Callbacks
     glutDisplayFunc(displayCallback);
     glutKeyboardFunc(keyboardCallback);
@@ -57,7 +70,7 @@ int main(int argc, char **argv) {
 
     // Adicionado para capturar teclas especiais como as setas
     glutSpecialFunc(specialKeysCallback);
-
+    glutTimerFunc(16, timerCallback, 0); // inicia o loop das animações
 
     // --- INSTRUÇÕES ATUALIZADAS E COMPLETAS ---
     printf("\n======================= Rabisquim - Instrucoes =======================\n\n");
@@ -81,6 +94,12 @@ int main(int argc, char **argv) {
     printf("         -> No modo Reflexao, pressione 'x' ou 'y' para refletir no eixo.\n");
     printf("  'h' -> Entrar no modo Cisalhamento (Shear).\n\n");
 
+    printf("--- Animações (com objetos selecionados) ---\n");
+    printf("  'b' -> Entrar no modo boing.\n");
+    printf("  'v' -> Entrar no modo perceguição.\n");
+    printf("  'g' -> Entrar no modo gravidade.\n");
+    printf("  ']' -> Aumenta a velocidade da animação.\n");
+    printf("  '[' -> Diminui a velocidade da animação.\n");
     printf("--- Controles Gerais ---\n");
     printf("  'ESC' -> Sair do programa.\n\n");
 
