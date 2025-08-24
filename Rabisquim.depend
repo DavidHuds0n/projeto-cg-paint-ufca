@@ -105,14 +105,18 @@
 	"segment.h"
 	"polygon.h"
 
-1755450572 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\animation.c
+1756049426 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\animation.c
+	<math.h>
+	<string.h>
+	<GL/glut.h>
 	"animation.h"
 	"objects.h"
 	"transformations.h"
-	<GL/glut.h>
-	<stdio.h>
+	"utils.h"
+	"input.h"
+	"config.h"
 
-1755730972 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\file_io.c
+1756049200 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\file_io.c
 	"file_io.h"
 	"objects.h"
 	"point.h"
@@ -121,7 +125,7 @@
 	<stdio.h>
 	<string.h>
 
-1755786154 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\input.c
+1756047715 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\input.c
 	<GL/glut.h>
 	<stdio.h>
 	<stdlib.h>
@@ -134,34 +138,35 @@
 	"polygon.h"
 	"transformations.h"
 	"file_io.h"
+	"animation.h"
 
-1755470426 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\config.h
+1756050263 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\config.h
 
-1755533465 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\input.h
+1756047905 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\input.h
 	"point.h"
 	"config.h"
 	"polygon.h"
 
-1755447160 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\point.h
+1756049577 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\point.h
 
-1755467506 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\polygon.h
+1756049898 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\polygon.h
 	"point.h"
 	"config.h"
 
-1755442529 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\objects.h
+1756048472 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\objects.h
 	"point.h"
 	"segment.h"
 	"polygon.h"
 	"config.h"
 
-1755447333 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\segment.h
+1756049647 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\segment.h
 	"point.h"
 
-1755713214 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\transformations.h
+1756048021 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\transformations.h
 	"objects.h"
 	"point.h"
 
-1755786288 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\main.c
+1756045896 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\main.c
 	<GL/glut.h>
 	<stdio.h>
 	<stdlib.h>
@@ -173,10 +178,11 @@
 	"segment.h"
 	"polygon.h"
 	"transformations.h"
+	"animation.h"
 
-1755383527 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\render.h
+1756050108 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\render.h
 
-1755467511 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\objects.c
+1756048941 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\objects.c
 	<stdio.h>
 	<stdlib.h>
 	<GL/glut.h>
@@ -186,14 +192,15 @@
 	"polygon.h"
 	"config.h"
 	"input.h"
+	"animation.h"
 
-1755736374 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\point.c
+1756049591 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\point.c
 	<GL/glut.h>
 	<stdio.h>
 	"point.h"
 	"config.h"
 
-1755787259 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\polygon.c
+1756049980 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\polygon.c
 	<GL/glut.h>
 	<GL/glu.h>
 	<stdio.h>
@@ -201,21 +208,22 @@
 	"point.h"
 	"config.h"
 	"utils.h"
+	"objects.h"
 
-1755383450 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\render.c
+1756050128 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\render.c
 	<stdio.h>
 	<GL/glut.h>
 	"render.h"
 	"objects.h"
 
-1755736377 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\segment.c
+1756049715 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\segment.c
 	<GL/glut.h>
 	<stdio.h>
 	<math.h>
 	"segment.h"
 	"point.h"
 
-1755787481 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\transformations.c
+1756048233 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\transformations.c
 	<stdio.h>
 	<math.h>
 	"transformations.h"
@@ -225,19 +233,21 @@
 	"polygon.h"
 	"utils.h"
 
-1755475035 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\utils.c
+1756049004 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\utils.c
 	"utils.h"
+	"objects.h"
 	"segment.h"
 	"polygon.h"
 	<stdio.h>
 
-1755450321 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\utils.h
+1756048975 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\utils.h
 	"objects.h"
 	"point.h"
 
-1755450564 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\animation.h
+1756049340 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\animation.h
+	"config.h"
 
-1755713511 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\file_io.h
+1756049124 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\file_io.h
 	<stdlib.h>
 	<stdio.h>
 

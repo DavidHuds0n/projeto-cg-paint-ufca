@@ -1,5 +1,10 @@
-// file_io.c
-// Implementação das funções de salvamento e carregamento de arquivos.
+/**
+ * @file file_io.c
+ * @brief Implementa as funções de salvamento e carregamento de arquivos da cena.
+ *
+ * O módulo converte a lista de objetos em um formato de texto para salvamento
+ * e, de forma inversa, lê este formato para reconstruir a cena na memória.
+ */
 
 #include "file_io.h"
 #include "objects.h"
@@ -9,26 +14,27 @@
 #include <stdio.h>
 #include <string.h>
 
+// --- SEÇÃO DE FUNÇÕES PÚBLICAS ---
+
 void saveSceneToFile(const char* filename) {
-    // TODO: Implementar a lógica de salvamento.
-    // 1. Abrir o arquivo no modo de escrita ("w").
-     FILE* f = fopen(filename, "w");
+    // 1. Abre o arquivo no modo de escrita ("w").
+    FILE* f = fopen(filename, "w");
     if (!f) {
         printf("[ERRO] Nao foi possivel abrir '%s' para escrita.\n", filename);
         return;
     }
 
-    // 2. Percorrer o array g_objects.
+    // 2. Conta os objetos de cada tipo para o cabeçalho do arquivo.
     int pointCount = 0, lineCount = 0, polyCount = 0;
     for (int i = 0; i < g_numObjects; i++) {
         switch (g_objects[i].type) {
-            case OBJECT_TYPE_POINT:   pointCount++; break;
+            case OBJECT_TYPE_POINT:    pointCount++; break;
             case OBJECT_TYPE_SEGMENT: lineCount++;  break;
             case OBJECT_TYPE_POLYGON: polyCount++;  break;
         }
     }
-    // 3. Para cada objeto, usar um switch no tipo e escrever seus dados
-    //    formatados no arquivo com fprintf.
+
+    // 3. Salva a seção de PONTOS.
     fprintf(f, "[PONTOS]\n");
     fprintf(f, "Cont: %d\n", pointCount);
     int pi = 0;
@@ -40,7 +46,7 @@ void saveSceneToFile(const char* filename) {
     }
     fprintf(f, "\n");
 
-    // 3) [LINHAS]
+    // 4. Salva a seção de LINHAS.
     fprintf(f, "[LINHAS]\n");
     fprintf(f, "Cont: %d\n", lineCount);
     int li = 0;
@@ -48,12 +54,12 @@ void saveSceneToFile(const char* filename) {
         if (g_objects[i].type == OBJECT_TYPE_SEGMENT) {
             Segment* s = (Segment*)g_objects[i].data;
             fprintf(f, "L%d: (%.2f, %.2f) -> (%.2f, %.2f)\n",
-                    li++, s->p1.x, s->p1.y, s->p2.x, s->p2.y);
+                     li++, s->p1.x, s->p1.y, s->p2.x, s->p2.y);
         }
     }
     fprintf(f, "\n");
 
-    // 4) [POLIGONOS]
+    // 5. Salva a seção de POLÍGONOS.
     fprintf(f, "[POLIGONOS]\n");
     fprintf(f, "Cont: %d\n", polyCount);
     int poli = 0;
@@ -66,50 +72,51 @@ void saveSceneToFile(const char* filename) {
             }
         }
     }
-    // 4. Fechar o arquivo.
+
+    // 6. Fecha o arquivo.
     fclose(f);
-    printf("Função saveSceneToFile chamada com o nome: %s\n", filename);
 }
 
 void loadSceneFromFile(const char* filename) {
-    // TODO: Implementar a lógica de carregamento.
-
-    // 2. Abrir o arquivo no modo de leitura ("r").
-    // 3. Ler o arquivo linha por linha (ou dado por dado) com fscanf.
-    // 4. Para cada linha/objeto, identificar o tipo, alocar memória (malloc),
-    //    criar o objeto e adicioná-lo à cena com addObject().
-    // 5. Fechar o arquivo.
+    // 1. Abre o arquivo no modo de leitura ("r").
     FILE* f = fopen(filename, "r");
     if (!f) {
         printf("[ERRO] Não foi possível abrir '%s' para leitura.\n", filename);
         return;
     }
 
-    // 1. Limpar a cena atual com clearAllObjects().
+    // 2. Limpa a cena atual para carregar a nova.
     clearAllObjects();
 
     char line[256];
-    int section = 0; // 1=PONTOS, 2=LINHAS, 3=POLIGONOS
+    int section = 0; // 0=Nenhum, 1=PONTOS, 2=LINHAS, 3=POLIGONOS
 
-    // Controle de polígono em construção
+    // Variaveis de estado para reconstruir polígonos.
     int buildingPoly = 0;
     GfxPolygon tempPoly;
 
+    // 3. Lê o arquivo linha por linha.
     while (fgets(line, sizeof(line), f)) {
-        // remove \r\n
+        // Normaliza a linha.
         line[strcspn(line, "\r\n")] = '\0';
-        if (line[0] == '\0') continue;       // pula linhas vazias
+        if (line[0] == '\0') continue; // Pula linhas vazias.
 
-        // troca de seção
-        if (strcmp(line, "[PONTOS]") == 0)   { section = 1; continue; }
-        if (strcmp(line, "[LINHAS]") == 0)   { section = 2; continue; }
-        if (strcmp(line, "[POLIGONOS]") == 0){ section = 3; continue; }
-
-        // ignora linhas "Cont: X"
+        // Lógica de máquina de estados para mudar a seção de leitura.
+        if (strcmp(line, "[PONTOS]") == 0)      { section = 1; continue; }
+        if (strcmp(line, "[LINHAS]") == 0)      { section = 2; continue; }
+        if (strcmp(line, "[POLIGONOS]") == 0)   { section = 3; continue; }
         if (strstr(line, "Cont:") != NULL) continue;
 
-        if (section == 1) {
-            // Pk: x, y
+        // Finaliza o polígono anterior antes de ler um novo objeto
+        if (section != 3 && buildingPoly && tempPoly.numVertices > 0) {
+            GfxPolygon* poly = (GfxPolygon*)malloc(sizeof(GfxPolygon));
+            *poly = tempPoly;
+            addObject(OBJECT_TYPE_POLYGON, poly);
+            buildingPoly = 0;
+        }
+
+        // 4. Interpreta a linha com base na seção atual.
+        if (section == 1) { // Seção de PONTOS
             float x, y;
             int idxDummy;
             if (sscanf(line, "P%d: %f, %f", &idxDummy, &x, &y) == 3) {
@@ -117,8 +124,7 @@ void loadSceneFromFile(const char* filename) {
                 *p = createPoint(x, y);
                 addObject(OBJECT_TYPE_POINT, p);
             }
-        } else if (section == 2) {
-            // Lk: (x1, y1) -> (x2, y2)
+        } else if (section == 2) { // Seção de LINHAS
             float x1, y1, x2, y2;
             int idxDummy;
             if (sscanf(line, "L%d: (%f, %f) -> (%f, %f)", &idxDummy, &x1, &y1, &x2, &y2) == 5) {
@@ -126,24 +132,17 @@ void loadSceneFromFile(const char* filename) {
                 *s = createSegment((Point){x1, y1}, (Point){x2, y2});
                 addObject(OBJECT_TYPE_SEGMENT, s);
             }
-        } else if (section == 3) {
-            // Polígono ou vértice
+        } else if (section == 3) { // Seção de POLÍGONOS
+            // Lógica para detectar o início de um polígono ou um novo vértice.
             if (strncmp(line, "Poligono", 8) == 0) {
-                // Se já estávamos montando um polígono anterior, finalize-o
                 if (buildingPoly && tempPoly.numVertices > 0) {
                     GfxPolygon* poly = (GfxPolygon*)malloc(sizeof(GfxPolygon));
                     *poly = tempPoly;
                     addObject(OBJECT_TYPE_POLYGON, poly);
-                    buildingPoly = 0;
                 }
-                // Inicia novo polígono
-                int polyIdx, numPts; // numPts é informativo; vamos confiar nas linhas Vx
-                if (sscanf(line, "Poligono %d - Pontas: %d", &polyIdx, &numPts) >= 1) {
-                    tempPoly = createPolygon();
-                    buildingPoly = 1;
-                }
+                tempPoly = createPolygon();
+                buildingPoly = 1;
             } else {
-                // Vértice: "  Vk: x, y"
                 float vx, vy;
                 int vIdxDummy;
                 if (sscanf(line, "  V%d: %f, %f", &vIdxDummy, &vx, &vy) == 3) {
@@ -151,7 +150,7 @@ void loadSceneFromFile(const char* filename) {
                         if (tempPoly.numVertices < MAX_POLYGON_VERTICES) {
                             tempPoly.vertices[tempPoly.numVertices++] = (Point){vx, vy};
                         } else {
-                            printf("[AVISO] Vértice ignorado; excedeu MAX_POLYGON_VERTICES.\n");
+                            printf("[AVISO] Vértice ignorado: excedeu MAX_POLYGON_VERTICES.\n");
                         }
                     }
                 }
@@ -159,14 +158,13 @@ void loadSceneFromFile(const char* filename) {
         }
     }
 
-    // Fecha e adiciona o último polígono se estava em construção
+    // 5. Finaliza o último polígono se o arquivo terminou durante sua leitura.
     if (buildingPoly && tempPoly.numVertices > 0) {
         GfxPolygon* poly = (GfxPolygon*)malloc(sizeof(GfxPolygon));
         *poly = tempPoly;
         addObject(OBJECT_TYPE_POLYGON, poly);
     }
 
+    // 6. Fecha o arquivo.
     fclose(f);
-
-    printf("Função loadSceneFromFile chamada com o nome: %s\n", filename);
 }

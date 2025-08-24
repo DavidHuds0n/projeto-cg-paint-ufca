@@ -1,7 +1,10 @@
-// input.c
-// Implementa toda a lógica de tratamento de eventos do usuário (teclado e mouse).
-// Funciona como uma máquina de estados, onde o comportamento das funções de callback
-// muda de acordo com o modo de operação atual (g_currentMode).
+/**
+ * @file input.c
+ * @brief Gerencia a lógica de tratamento de eventos do usuário (teclado e mouse).
+ *
+ * Este arquivo atua como uma máquina de estados, onde o comportamento das
+ * funções de callback muda dinamicamente com base no modo de operação atual.
+ */
 
 #include <GL/glut.h>
 #include <stdio.h>
@@ -18,8 +21,8 @@
 #include "file_io.h"
 #include "animation.h"
 
-// --- Definição das Variáveis Globais de Estado ---
-// --- Defini��o das Vari�veis Globais de Estado ---
+// --- SEÇÃO DE VARIÁVEIS GLOBAIS DE ESTADO ---
+
 ProgramMode g_currentMode = MODE_SELECT;
 int g_isDragging = 0;
 int g_segmentClickCount = 0;
@@ -29,7 +32,13 @@ int g_polygonVertexCount = 0;
 Point g_lastMousePos = {0.0f, 0.0f};
 Point g_currentMousePos = {0.0f, 0.0f};
 
-// --- Função para Debug dos Modos ---
+// --- SEÇÃO DE FUNÇÕES AUXILIARES ---
+
+/**
+ * @brief Retorna uma string descritiva para um dado modo de operação.
+ * @param mode O modo de operação.
+ * @return String constante com o nome do modo.
+ */
 static const char* getModeString(ProgramMode mode) {
     switch (mode) {
         case MODE_SELECT: return "MODE_SELECT";
@@ -45,10 +54,13 @@ static const char* getModeString(ProgramMode mode) {
     }
 }
 
-// --- Funções Auxiliares para Seleção ---
+// --- Funções Auxiliares para a Lógica de Seleção ---
 
 /**
- * @brief Verifica se um ponto (p) está dentro de um polígono (poly) usando o Algoritmo do Tiro.
+ * @brief Verifica se um ponto está dentro de um polígono usando o algoritmo de ray casting (tiro).
+ * @param poly O polígono a ser testado.
+ * @param p O ponto de teste.
+ * @return 1 se o ponto está dentro, 0 caso contrário.
  */
 static int selectPolygon(GfxPolygon* poly, Point p) {
     int crossings = 0;
@@ -56,34 +68,24 @@ static int selectPolygon(GfxPolygon* poly, Point p) {
         Point p1 = poly->vertices[i];
         Point p2 = poly->vertices[(i + 1) % poly->numVertices];
 
-        if(((p1.y > p.y) && (p2.y > p.y))){
+        if(((p1.y > p.y) && (p2.y > p.y)) || ((p1.y < p.y) && (p2.y < p.y)) || ((p1.x < p.x) && (p2.x < p.x))){
             continue;
         }
-        if(((p1.y < p.y) && (p2.y < p.y))){
-            continue;
-        }
-        if(((p1.x < p.x) && (p2.x < p.x))){
-            continue;
-        }
-        if(((p1.x > p.x && p2.x > p.x) && ((p1.y > p.y && p2.y < p.y) || (p1.y < p.y && p2.y > p.y)))){
-            crossings++;
-            continue;
-        }
-        if(((p1.y == p2.y) && (p1.y == p.y))){
-            continue;
-        }
-
-        float xi = p1.x + (p.y - p1.y)*(p2.x - p1.x) / (p2.y - p1.y);
-
-        if(xi> p.x){
-            crossings++;
+        if((p1.y > p.y && p2.y < p.y) || (p1.y < p.y && p2.y > p.y)){
+            float xi = p1.x + (p.y - p1.y)*(p2.x - p1.x) / (p2.y - p1.y);
+            if(xi> p.x){
+                crossings++;
+            }
         }
     }
     return crossings % 2; // Ímpar = dentro, Par = fora.
 }
 
 /**
- * @brief Calcula a menor distância de um ponto às arestas de um polígono.
+ * @brief Calcula a menor distância de um ponto a qualquer uma das arestas de um polígono.
+ * @param poly O polígono a ser testado.
+ * @param click_point O ponto de clique.
+ * @return A menor distância encontrada.
  */
 static float distPointToPolygonEdges(GfxPolygon* poly, Point click_point) {
     if (poly->numVertices < 2) return -1.0f;
@@ -100,7 +102,7 @@ static float distPointToPolygonEdges(GfxPolygon* poly, Point click_point) {
     return min_dist;
 }
 
-// Constantes para os "outcodes" do algoritmo de Cohen-Sutherland
+// Constantes para o algoritmo de Cohen-Sutherland
 #define INSIDE 0 // 0000
 #define LEFT   1 // 0001
 #define RIGHT  2 // 0010
@@ -108,7 +110,10 @@ static float distPointToPolygonEdges(GfxPolygon* poly, Point click_point) {
 #define TOP    8 // 1000
 
 /**
- * @brief Calcula o "outcode" de 4 bits de um ponto em relação a uma janela retangular.
+ * @brief Calcula o "outcode" de um ponto em relação a uma janela retangular.
+ * @param p O ponto.
+ * @param xmin, xmax, ymin, ymax As coordenadas da janela.
+ * @return O outcode de 4 bits.
  */
 static int computeOutCode(Point p, float xmin, float xmax, float ymin, float ymax) {
     int code = INSIDE;
@@ -121,48 +126,42 @@ static int computeOutCode(Point p, float xmin, float xmax, float ymin, float yma
 
 /**
  * @brief Verifica se um segmento de reta intercepta um retângulo.
- * Implementa a lógica do algoritmo de Cohen-Sutherland para seleção.
+ * @param s O segmento de reta.
+ * @param xmin, xmax, ymin, ymax As coordenadas do retângulo.
+ * @return 1 se o segmento pode interceptar, 0 se é trivialmente rejeitado.
  */
 static int segmentIntersectsRect(Segment s, float xmin, float xmax, float ymin, float ymax) {
     int outcode1 = computeOutCode(s.p1, xmin, xmax, ymin, ymax);
     int outcode2 = computeOutCode(s.p2, xmin, xmax, ymin, ymax);
-
     if (!(outcode1 | outcode2)) {
-        // Trivialmente aceito: ambos os pontos estão dentro da caixa.
-        return 1;
+        return 1; // Trivialmente aceito
     }
     if (outcode1 & outcode2) {
-        // Trivialmente rejeitado: ambos os pontos estão na mesma região externa.
-        return 0;
+        return 0; // Trivialmente rejeitado
     }
-
-    // Para os demais casos, a linha PODE cruzar a caixa. Para um teste de
-    // seleção, essa possibilidade já é suficiente para considerar uma seleção válida.
-    return 1;
+    return 1; // Pode interceptar
 }
 
-
-// --- Função para Seleção de Objetos (reutilizável) ---
+/**
+ * @brief Seleciona o objeto mais próximo em um ponto de clique, priorizando Pontos > Segmentos > Polígonos.
+ * @param click_point O ponto de clique na tela.
+ * @return O índice do objeto selecionado ou -1 se nenhum objeto for encontrado.
+ */
 static int selectObjectAtPoint(Point click_point) {
-    int final_found_index = -1;
+    int found_index = -1;
 
-    // Prioridade 1: Procura pelo PONTO mais próximo usando Bounding Box para filtrar.
+    // Prioridade 1: Pontos
     int closest_point_index = -1;
-    float min_sq_dist_point = -1.0f; // Usamos a distância ao quadrado para evitar sqrtf
-
+    float min_sq_dist_point = -1.0f;
     for (int i = 0; i < g_numObjects; i++) {
         if (g_objects[i].type == OBJECT_TYPE_POINT) {
             Point* p_obj = (Point*)g_objects[i].data;
-
-            // FASE 1: Filtro Rápido com a Caixa de Tolerância (Método da Professora)
             if (fabs(p_obj->x - click_point.x) <= CLICK_TOLERANCE &&
                 fabs(p_obj->y - click_point.y) <= CLICK_TOLERANCE)
             {
-                // FASE 2: Desempate Preciso com a menor distância (Sua Lógica)
                 float dx = p_obj->x - click_point.x;
                 float dy = p_obj->y - click_point.y;
                 float sq_dist = dx * dx + dy * dy;
-
                 if (closest_point_index == -1 || sq_dist < min_sq_dist_point) {
                     min_sq_dist_point = sq_dist;
                     closest_point_index = i;
@@ -170,355 +169,279 @@ static int selectObjectAtPoint(Point click_point) {
             }
         }
     }
-
     if (closest_point_index != -1) {
-        final_found_index = closest_point_index;
+        return closest_point_index;
     }
 
-    // Prioridade 2: Se não achou um ponto, procura pelo SEGMENTO mais próximo.
-    if (final_found_index == -1) {
-        int closest_segment_index = -1;
-        float min_dist_segment = CLICK_TOLERANCE;
-
-        // Define a "caixa de tolerância" retangular ao redor do clique.
-        float xmin = click_point.x - CLICK_TOLERANCE;
-        float xmax = click_point.x + CLICK_TOLERANCE;
-        float ymin = click_point.y - CLICK_TOLERANCE;
-        float ymax = click_point.y + CLICK_TOLERANCE;
-
-        // FASE 1: Filtro Rápido com Cohen-Sutherland (Método da Professora)
-        for (int i = 0; i < g_numObjects; i++) {
-            if (g_objects[i].type == OBJECT_TYPE_SEGMENT) {
-                Segment* s_obj = (Segment*)g_objects[i].data;
-
-                if (segmentIntersectsRect(*s_obj, xmin, xmax, ymin, ymax)) {
-                    // FASE 2: Desempate Preciso com a menor distância (Sua Lógica)
-                    float dist = distPointSegment(click_point, *s_obj);
-
-                    if (dist < min_dist_segment) {
-                        min_dist_segment = dist;
-                        closest_segment_index = i;
-                    }
+    // Prioridade 2: Segmentos
+    int closest_segment_index = -1;
+    float min_dist_segment = CLICK_TOLERANCE;
+    float xmin = click_point.x - CLICK_TOLERANCE;
+    float xmax = click_point.x + CLICK_TOLERANCE;
+    float ymin = click_point.y - CLICK_TOLERANCE;
+    float ymax = click_point.y + CLICK_TOLERANCE;
+    for (int i = 0; i < g_numObjects; i++) {
+        if (g_objects[i].type == OBJECT_TYPE_SEGMENT) {
+            Segment* s_obj = (Segment*)g_objects[i].data;
+            if (segmentIntersectsRect(*s_obj, xmin, xmax, ymin, ymax)) {
+                float dist = distPointSegment(click_point, *s_obj);
+                if (dist < min_dist_segment) {
+                    min_dist_segment = dist;
+                    closest_segment_index = i;
                 }
             }
         }
-
-        if (closest_segment_index != -1) {
-            final_found_index = closest_segment_index;
-        }
+    }
+    if (closest_segment_index != -1) {
+        return closest_segment_index;
     }
 
-    // Prioridade 3: Polígonos (sem alterações, sua lógica já é perfeita)
-    if (final_found_index == -1) {
-        int closest_poly_index = -1;
-        float min_poly_dist = -1.0f;
-
-        for (int i = 0; i < g_numObjects; i++) {
-            if (g_objects[i].type == OBJECT_TYPE_POLYGON) {
-                GfxPolygon* poly_obj = (GfxPolygon*)g_objects[i].data;
-                if (selectPolygon(poly_obj, click_point)) {
-                    float dist_to_edge = distPointToPolygonEdges(poly_obj, click_point);
-                    if (closest_poly_index == -1 || dist_to_edge < min_poly_dist) {
-                        min_poly_dist = dist_to_edge;
-                        closest_poly_index = i;
-                    }
+    // Prioridade 3: Polígonos
+    int closest_poly_index = -1;
+    float min_poly_dist = -1.0f;
+    for (int i = 0; i < g_numObjects; i++) {
+        if (g_objects[i].type == OBJECT_TYPE_POLYGON) {
+            GfxPolygon* poly_obj = (GfxPolygon*)g_objects[i].data;
+            if (selectPolygon(poly_obj, click_point)) {
+                float dist_to_edge = distPointToPolygonEdges(poly_obj, click_point);
+                if (closest_poly_index == -1 || dist_to_edge < min_poly_dist) {
+                    min_poly_dist = dist_to_edge;
+                    closest_poly_index = i;
                 }
             }
         }
-        if (closest_poly_index != -1) {
-            final_found_index = closest_poly_index;
-        }
     }
-
-    return final_found_index;
+    return closest_poly_index;
 }
 
-// --- Funções de Callback ---
+// --- SEÇÃO DE FUNÇÕES DE CALLBACK GLUT ---
 
+/**
+ * @brief Callback para eventos de teclado (teclas normais).
+ * @param key O código ASCII da tecla pressionada.
+ * @param x Coordenada X do mouse no momento do evento.
+ * @param y Coordenada Y do mouse no momento do evento.
+ */
 void keyboardCallback(unsigned char key, int x, int y) {
     int objectIsSelected = (g_selectedObjectIndex != -1);
     ProgramMode oldMode = g_currentMode;
 
     switch (key) {
-        // --- Cases para MUDANÇA DE MODO ---
+        // Ações de mudança de modo
         case 'p': case 'P': g_currentMode = MODE_CREATE_POINT; break;
         case 'l': case 'L': g_currentMode = MODE_CREATE_SEGMENT; break;
         case 'o': case 'O': g_currentMode = MODE_CREATE_POLYGON; break;
         case 's': case 'S': g_currentMode = MODE_SELECT; break;
         case 't': case 'T':
             if (objectIsSelected) g_currentMode = MODE_TRANSLATE;
-            else printf("[DEBUG] Não é possível entrar no modo TRANSLATE: nenhum objeto selecionado!\n");
+            else printf("[AVISO] Selecione um objeto para o modo de translação.\n");
             break;
         case 'r': case 'R':
             if (objectIsSelected) g_currentMode = MODE_ROTATE;
-            else printf("[DEBUG] Não é possível entrar no modo ROTATE: nenhum objeto selecionado!\n");
+            else printf("[AVISO] Selecione um objeto para o modo de rotação.\n");
             break;
-        case 'e': case 'E': // 'E' para Escala
+        case 'e': case 'E':
             if (objectIsSelected) g_currentMode = MODE_SCALE;
-            else printf("[DEBUG] Não é possível entrar no modo SCALE: nenhum objeto selecionado!\n");
+            else printf("[AVISO] Selecione um objeto para o modo de escala.\n");
             break;
-        case 'h': case 'H': // 'H' para sHear (Cisalhamento)
+        case 'h': case 'H':
             if (objectIsSelected) g_currentMode = MODE_SHEAR;
-            else printf("[DEBUG] Não é possível entrar no modo SHEAR: nenhum objeto selecionado!\n");
+            else printf("[AVISO] Selecione um objeto para o modo de cisalhamento.\n");
             break;
-        case 'm': case 'M': // 'M' de Mirror (Espelho/Reflexão)
+        case 'm': case 'M':
             if (objectIsSelected) g_currentMode = MODE_REFLECT;
-            else printf("[DEBUG] Não é possível entrar no modo REFLECT: nenhum objeto selecionado!\n");
+            else printf("[AVISO] Selecione um objeto para o modo de reflexão.\n");
             break;
 
-        // --- AÇÕES DENTRO DE MODOS ESPECÍFICOS ---
-
+        // Ações específicas de transformação
         case 'x': case 'X':
             if (objectIsSelected && g_currentMode == MODE_REFLECT) {
-                printf("[DEBUG] Reflexão em X aplicada ao objeto %d\n", g_selectedObjectIndex);
-                reflectObject(g_selectedObjectIndex, 0); // Chama a função de transformação
-                glutPostRedisplay();
-            } else if (objectIsSelected) {
-                printf("[AVISO] Para refletir, primeiro entre no modo de reflexão (pressione 'm').\n");
-            } else {
-                printf("[AVISO] Selecione um objeto para poder refletir.\n");
+                reflectObject(g_selectedObjectIndex, 0); // Eixo X
             }
             break;
         case 'y': case 'Y':
             if (objectIsSelected && g_currentMode == MODE_REFLECT) {
-                printf("[DEBUG] Reflexão em Y aplicada ao objeto %d\n", g_selectedObjectIndex);
-                reflectObject(g_selectedObjectIndex, 1); // Chama a função de transformação
-                glutPostRedisplay();
-            } else if (objectIsSelected) {
-                printf("[AVISO] Para refletir, primeiro entre no modo de reflexão (pressione 'm').\n");
-            } else {
-                printf("[AVISO] Selecione um objeto para poder refletir.\n");
+                reflectObject(g_selectedObjectIndex, 1); // Eixo Y
             }
             break;
-
         case '=':
             if (objectIsSelected && g_currentMode == MODE_SCALE) {
-                // Aumenta o tamanho do objeto em 10%
                 scaleObject(g_selectedObjectIndex, 1.1f, 1.1f);
-                glutPostRedisplay(); // Essencial: Pede para a tela ser redesenhada!
             }
             break;
         case '-':
             if (objectIsSelected && g_currentMode == MODE_SCALE) {
-                // Diminui o tamanho do objeto em 10%
                 scaleObject(g_selectedObjectIndex, 0.9f, 0.9f);
-                glutPostRedisplay(); // Essencial: Pede para a tela ser redesenhada!
             }
             break;
 
+        // Ações de gerenciamento de objetos
         case 127: // Tecla DELETE
             if (objectIsSelected) removeObject(g_selectedObjectIndex);
             break;
         case 27: // Tecla ESC
             clearAllObjects(); exit(0);
             break;
-        case 'b': case 'B':
-            anim_toggle_selected(); // liga/desliga bounce no selecionado
-            break;
-        case 'v': case 'V': // jogar na direção do mouse
-            anim_kick_towards_mouse(600.0f); // velocidade inicial
-            break;
 
-        case 'g': case 'G': // alterna gravidade no selecionado
-            if(g_selectedObjectIndex != -1){
-                int i = g_selectedObjectIndex;
-                g_anim[i].gravity = !g_anim[i].gravity;
-                printf("[DEBUG] Gravity %s no objeto %d\n", g_anim[i].gravity?"ON":"OFF", i);
+        // Ações de animação
+        case 'b': case 'B': anim_toggle_selected(); break;
+        case 'v': case 'V': anim_kick_towards_mouse(600.0f); break;
+        case 'g': case 'G':
+            if (objectIsSelected) {
+                g_anim[g_selectedObjectIndex].gravity = !g_anim[g_selectedObjectIndex].gravity;
             }
             break;
-
         case '[':
-            if(g_selectedObjectIndex != -1) { g_anim[g_selectedObjectIndex].vx *= 0.9f;
-                                              g_anim[g_selectedObjectIndex].vy *= 0.9f; }
+            if (objectIsSelected) {
+                g_anim[g_selectedObjectIndex].vx *= 0.9f;
+                g_anim[g_selectedObjectIndex].vy *= 0.9f;
+            }
             break;
-
         case ']':
-            if(g_selectedObjectIndex != -1) { g_anim[g_selectedObjectIndex].vx *= 1.1f;
-                                              g_anim[g_selectedObjectIndex].vy *= 1.1f; }
+            if (objectIsSelected) {
+                g_anim[g_selectedObjectIndex].vx *= 1.1f;
+                g_anim[g_selectedObjectIndex].vy *= 1.1f;
+            }
             break;
-
     }
 
     if (g_currentMode != oldMode) {
-        printf("[DEBUG] Modo alterado de %s para %s\n", getModeString(oldMode), getModeString(g_currentMode));
+        printf("[DEBUG] Modo alterado para %s\n", getModeString(g_currentMode));
         g_segmentClickCount = 0;
         g_polygonVertexCount = 0;
         if (g_currentMode == MODE_SELECT || g_currentMode == MODE_CREATE_POINT ||
             g_currentMode == MODE_CREATE_SEGMENT || g_currentMode == MODE_CREATE_POLYGON) {
-             g_selectedObjectIndex = -1;
-             g_isDragging = 0;
+            g_selectedObjectIndex = -1;
+            g_isDragging = 0;
         }
     }
     glutPostRedisplay();
 }
 
+/**
+ * @brief Callback para eventos de teclado (teclas especiais, como F1, setas, etc).
+ * @param key O código da tecla especial.
+ * @param x Coordenada X do mouse.
+ * @param y Coordenada Y do mouse.
+ */
 void specialKeysCallback(int key, int x, int y) {
-    if (key == GLUT_KEY_F5){
+    // Ações de Arquivo
+    if (key == GLUT_KEY_F5) {
         saveSceneToFile("scene.txt");
         return;
     }
-    if (key == GLUT_KEY_F9){
+    if (key == GLUT_KEY_F9) {
         loadSceneFromFile("scene.txt");
         glutPostRedisplay();
         return;
     }
+
+    // Ações condicionadas ao modo de operação
     if (g_selectedObjectIndex != -1 && g_currentMode == MODE_ROTATE) {
         switch (key) {
-            case GLUT_KEY_LEFT:
-                printf("Ação: Rotação Esquerda\n");
-                rotateObject(g_selectedObjectIndex, 20);
-                break;
-            case GLUT_KEY_RIGHT:
-                printf("Ação: Rotação Direita\n");
-                rotateObject(g_selectedObjectIndex, -20);
-                break;
+            case GLUT_KEY_LEFT: rotateObject(g_selectedObjectIndex, 20); break;
+            case GLUT_KEY_RIGHT: rotateObject(g_selectedObjectIndex, -20); break;
         }
         glutPostRedisplay();
     }
-    if (g_currentMode == MODE_SHEAR) {
-        float shearFactor = 0.1f; // Define o quanto o objeto será inclinado a cada tecla pressionada
-
+    if (g_selectedObjectIndex != -1 && g_currentMode == MODE_SHEAR) {
+        float shearFactor = 0.1f;
         switch (key) {
-            case GLUT_KEY_RIGHT: // Seta para a direita
-                // Aplica cisalhamento positivo em X
-                shearObject(g_selectedObjectIndex, shearFactor, 0.0f);
-                printf("[DEBUG] Shear X+ aplicado ao objeto %d\n", g_selectedObjectIndex);
-                break;
-            case GLUT_KEY_LEFT: // Seta para a esquerda
-                // Aplica cisalhamento negativo em X
-                shearObject(g_selectedObjectIndex, -shearFactor, 0.0f);
-                printf("[DEBUG] Shear X- aplicado ao objeto %d\n", g_selectedObjectIndex);
-                break;
-            case GLUT_KEY_UP: // Seta para cima
-                // Aplica cisalhamento positivo em Y
-                shearObject(g_selectedObjectIndex, 0.0f, shearFactor);
-                printf("[DEBUG] Shear Y+ aplicado ao objeto %d\n", g_selectedObjectIndex);
-                break;
-            case GLUT_KEY_DOWN: // Seta para baixo
-                // Aplica cisalhamento negativo em Y
-                shearObject(g_selectedObjectIndex, 0.0f, -shearFactor);
-                printf("[DEBUG] Shear Y- aplicado ao objeto %d\n", g_selectedObjectIndex);
-                break;
+            case GLUT_KEY_RIGHT: shearObject(g_selectedObjectIndex, shearFactor, 0.0f); break;
+            case GLUT_KEY_LEFT: shearObject(g_selectedObjectIndex, -shearFactor, 0.0f); break;
+            case GLUT_KEY_UP: shearObject(g_selectedObjectIndex, 0.0f, shearFactor); break;
+            case GLUT_KEY_DOWN: shearObject(g_selectedObjectIndex, 0.0f, -shearFactor); break;
         }
-        glutPostRedisplay(); // Pede para redesenhar a tela para ver a mudança
+        glutPostRedisplay();
     }
 }
 
+/**
+ * @brief Callback para eventos de clique do mouse.
+ * @param button O botão do mouse pressionado.
+ * @param state O estado do botão (GLUT_DOWN ou GLUT_UP).
+ * @param x Coordenada X do clique.
+ * @param y Coordenada Y do clique.
+ */
 void mouseCallback(int button, int state, int x, int y) {
     float gl_y = WINDOW_HEIGHT - (float)y;
     Point click_point = { (float)x, gl_y };
 
     if (state == GLUT_DOWN) {
-        if (g_currentMode == MODE_CREATE_POINT) {
-            if (button == GLUT_LEFT_BUTTON) {
-                Point* newPoint = (Point*)malloc(sizeof(Point));
-                *newPoint = createPoint(click_point.x, click_point.y);
-                addObject(OBJECT_TYPE_POINT, newPoint);
-                g_selectedObjectIndex = g_numObjects - 1;
-                printf("[DEBUG] Ponto criado e selecionado (índice %d)\n", g_selectedObjectIndex);
-            }
+        if (g_currentMode == MODE_CREATE_POINT && button == GLUT_LEFT_BUTTON) {
+            Point* newPoint = (Point*)malloc(sizeof(Point));
+            *newPoint = createPoint(click_point.x, click_point.y);
+            addObject(OBJECT_TYPE_POINT, newPoint);
+            g_selectedObjectIndex = g_numObjects - 1;
         }
-        else if (g_currentMode == MODE_CREATE_SEGMENT) {
-            if (button == GLUT_LEFT_BUTTON) {
-                g_segmentClickCount++;
-                if (g_segmentClickCount == 1) {
-                    g_segmentP1 = click_point;
-                    printf("[DEBUG] Primeiro ponto do segmento definido\n");
-                } else if (g_segmentClickCount == 2) {
-                    Segment* newSegment = (Segment*)malloc(sizeof(Segment));
-                    *newSegment = createSegment(g_segmentP1, click_point);
-                    addObject(OBJECT_TYPE_SEGMENT, newSegment);
-                    g_selectedObjectIndex = g_numObjects - 1;
-                    g_segmentClickCount = 0;
-                    printf("[DEBUG] Segmento criado e selecionado (índice %d)\n", g_selectedObjectIndex);
-                }
+        else if (g_currentMode == MODE_CREATE_SEGMENT && button == GLUT_LEFT_BUTTON) {
+            g_segmentClickCount++;
+            if (g_segmentClickCount == 1) {
+                g_segmentP1 = click_point;
+            } else if (g_segmentClickCount == 2) {
+                Segment* newSegment = (Segment*)malloc(sizeof(Segment));
+                *newSegment = createSegment(g_segmentP1, click_point);
+                addObject(OBJECT_TYPE_SEGMENT, newSegment);
+                g_selectedObjectIndex = g_numObjects - 1;
+                g_segmentClickCount = 0;
             }
         }
         else if (g_currentMode == MODE_CREATE_POLYGON) {
-            if (button == GLUT_LEFT_BUTTON) {
-                if (g_polygonVertexCount < MAX_POLYGON_VERTICES) {
-                    g_polygonVertices[g_polygonVertexCount++] = click_point;
-                    printf("[DEBUG] Vértice %d do polígono adicionado\n", g_polygonVertexCount);
+            if (button == GLUT_LEFT_BUTTON && g_polygonVertexCount < MAX_POLYGON_VERTICES) {
+                g_polygonVertices[g_polygonVertexCount++] = click_point;
+            } else if (button == GLUT_RIGHT_BUTTON && g_polygonVertexCount >= 3) {
+                GfxPolygon* newPolygon = (GfxPolygon*)malloc(sizeof(GfxPolygon));
+                *newPolygon = createPolygon();
+                for (int i = 0; i < g_polygonVertexCount; i++) {
+                    addVertexToPolygon(newPolygon, g_polygonVertices[i]);
                 }
-            } else if (button == GLUT_RIGHT_BUTTON) {
-                if (g_polygonVertexCount >= 3) {
-                    GfxPolygon* newPolygon = (GfxPolygon*)malloc(sizeof(GfxPolygon));
-                    *newPolygon = createPolygon();
-                    for (int i = 0; i < g_polygonVertexCount; i++) {
-                        addVertexToPolygon(newPolygon, g_polygonVertices[i]);
-                    }
-                    addObject(OBJECT_TYPE_POLYGON, newPolygon);
-                    g_selectedObjectIndex = g_numObjects - 1;
-                    printf("[DEBUG] Polígono criado e selecionado (índice %d) com %d vértices\n",
-                           g_selectedObjectIndex, g_polygonVertexCount);
-                }
+                addObject(OBJECT_TYPE_POLYGON, newPolygon);
+                g_selectedObjectIndex = g_numObjects - 1;
                 g_polygonVertexCount = 0;
             }
         }
-        else if (g_currentMode == MODE_SELECT) {
+        else if (g_currentMode == MODE_SELECT || g_currentMode == MODE_TRANSLATE) {
             if (button == GLUT_LEFT_BUTTON) {
                 int found_index = selectObjectAtPoint(click_point);
-                g_selectedObjectIndex = found_index;
-
-                if (g_selectedObjectIndex != -1) {
+                if (found_index != -1) {
+                    g_selectedObjectIndex = found_index;
                     g_isDragging = 1;
                     g_lastMousePos = click_point;
-                    printf("[DEBUG] Objeto selecionado (índice %d) - Drag iniciado\n", g_selectedObjectIndex);
                 } else {
-                    printf("[DEBUG] Nenhum objeto encontrado no clique\n");
+                    g_selectedObjectIndex = -1;
+                    g_isDragging = 0;
                 }
             }
         }
-        //Permitir iniciar drag no modo TRANSLATE
-        else if (g_currentMode == MODE_TRANSLATE) {
-            if (button == GLUT_LEFT_BUTTON) {
-                if (g_selectedObjectIndex != -1) {
-                    // Se já tem um objeto selecionado, inicia o drag
-                    g_isDragging = 1;
-                    g_lastMousePos = click_point;
-                    printf("[DEBUG] Drag de translação iniciado para objeto %d\n", g_selectedObjectIndex);
-                } else {
-                    // Se não tem objeto selecionado, tenta selecionar um
-                    int found_index = selectObjectAtPoint(click_point);
-                    if (found_index != -1) {
-                        g_selectedObjectIndex = found_index;
-                        g_isDragging = 1;
-                        g_lastMousePos = click_point;
-                        printf("[DEBUG] Objeto selecionado (índice %d) e drag de translação iniciado\n", g_selectedObjectIndex);
-                    } else {
-                        printf("[DEBUG] Nenhum objeto encontrado para transladar\n");
-                    }
-                }
-            }
-        }
-
-
-        glutPostRedisplay();
     }
-    else if (state == GLUT_UP) {
-        if (button == GLUT_LEFT_BUTTON && g_isDragging) {
-            g_isDragging = 0;
-            printf("[DEBUG] Drag finalizado\n");
-        }
+    else if (state == GLUT_UP && button == GLUT_LEFT_BUTTON) {
+        g_isDragging = 0;
     }
+    glutPostRedisplay();
 }
 
+/**
+ * @brief Callback para o evento de arrastar o mouse (botão pressionado).
+ * @param x Coordenada X do mouse.
+ * @param y Coordenada Y do mouse.
+ */
 void motionCallback(int x, int y) {
     if (g_isDragging && g_currentMode == MODE_TRANSLATE && g_selectedObjectIndex != -1) {
         float gl_y = WINDOW_HEIGHT - (float)y;
         Point currentMousePos = {(float)x, gl_y};
-
         float dx = currentMousePos.x - g_lastMousePos.x;
         float dy = currentMousePos.y - g_lastMousePos.y;
-
-        printf("[DEBUG] Transladando objeto %d: dx=%.2f, dy=%.2f\n", g_selectedObjectIndex, dx, dy);
-
         translateObject(g_selectedObjectIndex, dx, dy);
         g_lastMousePos = currentMousePos;
         glutPostRedisplay();
     }
 }
 
+/**
+ * @brief Callback para o evento de movimento passivo do mouse (sem botão pressionado).
+ * @param x Coordenada X do mouse.
+ * @param y Coordenada Y do mouse.
+ */
 void passiveMotionCallback(int x, int y) {
     g_currentMousePos.x = (float)x;
     g_currentMousePos.y = WINDOW_HEIGHT - (float)y;

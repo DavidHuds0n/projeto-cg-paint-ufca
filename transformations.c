@@ -1,8 +1,10 @@
-// transformations.c
 /**
  * @file transformations.c
- * @brief Implementação das funções de transformações geométricas e manipulação de matrizes.
- * Contém a lógica matemática para criar e aplicar matrizes de transformação aos objetos da cena.
+ * @brief Implementação das transformações geométricas e manipulação de matrizes.
+ *
+ * Contém a lógica matemática para criar e aplicar matrizes de transformação
+ * aos objetos da cena. As transformações complexas são realizadas via
+ * composição de matrizes.
  */
 
 #include <stdio.h>
@@ -12,9 +14,10 @@
 #include "point.h"
 #include "segment.h"
 #include "polygon.h"
-#include "utils.h" // Necessário para getObjectCenter()
+#include "utils.h"
 
-// --- Funções Auxiliares para Criação de Matrizes ---
+// --- SEÇÃO DE FUNÇÕES AUXILIARES DE MATRIZES ---
+// Funções para criar e manipular as matrizes de transformação.
 
 /**
  * @brief Cria e retorna uma matriz identidade 3x3.
@@ -51,27 +54,15 @@ Matrix3x3 createScaleMatrix(float sx, float sy) {
 
 /**
  * @brief Cria uma matriz de rotação 2D.
- * @param angleDegrees O ângulo de rotação em graus. A função deverá converter para radianos.
+ * @param angleDegrees O ângulo de rotação em graus.
  */
-Matrix3x3 createRotationMatrix(float angle){
-    Matrix3x3 result;
-
-    float rad = angle * M_PI / 180.0f;
-
-    // Coluna 1:
+Matrix3x3 createRotationMatrix(float angleDegrees){
+    Matrix3x3 result = createIdentityMatrix();
+    float rad = angleDegrees * M_PI / 180.0f;
     result.m[0][0] = cosf(rad);
     result.m[1][0] = sinf(rad);
-    result.m[2][0] = 0.0;
-
-    // Coluna 2:
     result.m[0][1] = -sinf(rad);
     result.m[1][1] = cosf(rad);
-    result.m[2][1] = 0.0;
-
-    // Coluna 3:
-    result.m[0][2] = 0.0;
-    result.m[1][2] = 0.0;
-    result.m[2][2] = 1.0;
 
     return result;
 }
@@ -81,16 +72,12 @@ Matrix3x3 createRotationMatrix(float angle){
  * @param axis O eixo de reflexão. Use 0 para refletir sobre o eixo X e 1 para o eixo Y.
  */
 Matrix3x3 createReflectionMatrix(int axis) {
-    // 1. Começa com uma matriz identidade. É mais limpo e seguro.
     Matrix3x3 mat = createIdentityMatrix();
-
-    // 2. Aplica a inversão de sinal no eixo correto.
-    if (axis == 0) { // Reflexão sobre o eixo X (inverte a coordenada Y)
+    if (axis == 0) { // Reflexão sobre o eixo X (inverte Y)
         mat.m[1][1] = -1.0f;
-    } else { // Reflexão sobre o eixo Y (inverte a coordenada X)
+    } else { // Reflexão sobre o eixo Y (inverte X)
         mat.m[0][0] = -1.0f;
     }
-
     return mat;
 }
 
@@ -106,9 +93,9 @@ Matrix3x3 createShearMatrix(float shx, float shy) {
     return mat;
 }
 
-
-// --- Funções de Lógica e Aplicação de Matrizes ---
-
+/**
+ * @brief Multiplica uma matriz por um ponto 2D.
+ */
 Point multiplyMatrixByPoint(Matrix3x3 mat, Point p) {
     Point transformedP;
     transformedP.x = mat.m[0][0] * p.x + mat.m[0][1] * p.y + mat.m[0][2] * 1.0f;
@@ -116,6 +103,9 @@ Point multiplyMatrixByPoint(Matrix3x3 mat, Point p) {
     return transformedP;
 }
 
+/**
+ * @brief Multiplica duas matrizes 3x3.
+ */
 Matrix3x3 multiplyMatrices(Matrix3x3 m1, Matrix3x3 m2) {
     Matrix3x3 result;
     for (int i = 0; i < 3; i++) {
@@ -129,10 +119,14 @@ Matrix3x3 multiplyMatrices(Matrix3x3 m1, Matrix3x3 m2) {
     return result;
 }
 
+// --- SEÇÃO DE FUNÇÕES DE LÓGICA E APLICAÇÃO DE MATRIZES ---
+// Funções internas que delegam as operações de transformação.
+
 /**
- * @brief Função central que aplica uma matriz de transformação a um objeto.
- * Esta função age como um "dispatcher", contendo a lógica para identificar o tipo
- * do objeto e aplicar a matriz de forma adequada a todos os seus vértices.
+ * @brief Aplica uma matriz de transformação a um objeto.
+ *
+ * Esta função age como um "dispatcher", identificando o tipo do objeto e
+ * aplicando a matriz a todos os seus vértices de forma adequada.
  */
 void applyMatrixToObject(int objectIndex, Matrix3x3 matrix) {
     if (objectIndex < 0 || objectIndex >= g_numObjects) {
@@ -162,103 +156,99 @@ void applyMatrixToObject(int objectIndex, Matrix3x3 matrix) {
 }
 
 
-// --- Funções de Transformação (Interface Pública) ---
-// Estas são as funções que devem ser chamadas por outros módulos (como input.c).
+// --- SEÇÃO DE FUNÇÕES DE TRANSFORMAÇÃO (INTERFACE PÚBLICA) ---
+// Estas são as funções que devem ser chamadas por outros módulos (e.g., input.c).
 
 void translateObject(int objectIndex, float dx, float dy) {
-    // Cláusula de guarda para garantir que o índice é válido.
     if (objectIndex < 0 || objectIndex >= g_numObjects) {
         return;
     }
-
-    // 1. Cria a matriz específica para esta transformação.
     Matrix3x3 translationMatrix = createTranslationMatrix(dx, dy);
-
-    // 2. Delega a aplicação da matriz à função central.
     applyMatrixToObject(objectIndex, translationMatrix);
 }
 
 void scaleObject(int objectIndex, float sx, float sy) {
-    // Cláusula de guarda para garantir que o índice é válido ANTES de usá-lo.
     if (objectIndex < 0 || objectIndex >= g_numObjects) {
         return;
     }
-
-    // 1. Para uma escala correta, a transformação é aplicada em relação ao centro do objeto.
+    // Para uma escala correta, a transformação é aplicada em relação ao centro do objeto.
     Point center = getObjectCenter(&g_objects[objectIndex]);
 
-    // 2. A matriz final é uma composição de três transformações: T(c) * S(sx,sy) * T(-c)
+    // A matriz final é uma composição de três transformações:
+    // 1. Translação do objeto para a origem (T(-c))
     Matrix3x3 toOriginMatrix = createTranslationMatrix(-center.x, -center.y);
+    // 2. Aplicação da escala na origem (S(sx,sy))
     Matrix3x3 scaleMatrix = createScaleMatrix(sx, sy);
+    // 3. Translação do objeto de volta para sua posição original (T(c))
     Matrix3x3 fromOriginMatrix = createTranslationMatrix(center.x, center.y);
 
-    // 3. Multiplica as matrizes na ordem correta (a primeira a ser aplicada fica à direita).
+    // A ordem de multiplicação é crucial: T(c) * S * T(-c)
     Matrix3x3 tempMatrix = multiplyMatrices(scaleMatrix, toOriginMatrix);
     Matrix3x3 finalMatrix = multiplyMatrices(fromOriginMatrix, tempMatrix);
 
-    // 4. Delega a aplicação da matriz final à função central.
     applyMatrixToObject(objectIndex, finalMatrix);
 }
 
 
 void rotateObject(int objectIndex, float angle) {
-
+    if (objectIndex < 0 || objectIndex >= g_numObjects) {
+        return;
+    }
+    // Para uma rotação em torno do centro do objeto, a transformação é composta:
     Point objectCenter = getObjectCenter(&g_objects[objectIndex]);
-    Matrix3x3 translationMatrix = createTranslationMatrix(-objectCenter.x, -objectCenter.y);
-    Matrix3x3 rotationMatrix = createRotationMatrix(angle);
-    Matrix3x3 translationMatrixInv = createTranslationMatrix(objectCenter.x, objectCenter.y);
-    Matrix3x3 compositeMatrix = multiplyMatrices(rotationMatrix, translationMatrix);
-    compositeMatrix = multiplyMatrices(translationMatrixInv, compositeMatrix);
-    applyMatrixToObject(objectIndex, compositeMatrix);
 
-    printf("Função rotateObject chamada para o objeto %d com ângulo %.1f\n", objectIndex, angle);
+    // 1. Translação do objeto para a origem (T(-c))
+    Matrix3x3 toOriginMatrix = createTranslationMatrix(-objectCenter.x, -objectCenter.y);
+    // 2. Aplicação da rotação na origem (R(angle))
+    Matrix3x3 rotationMatrix = createRotationMatrix(angle);
+    // 3. Translação do objeto de volta para sua posição original (T(c))
+    Matrix3x3 fromOriginMatrix = createTranslationMatrix(objectCenter.x, objectCenter.y);
+
+    // A ordem de multiplicação é crucial: T(c) * R * T(-c)
+    Matrix3x3 tempMatrix = multiplyMatrices(rotationMatrix, toOriginMatrix);
+    Matrix3x3 compositeMatrix = multiplyMatrices(fromOriginMatrix, tempMatrix);
+
+    applyMatrixToObject(objectIndex, compositeMatrix);
 }
 
 void reflectObject(int objectIndex, int axis) {
-    // Cláusula de guarda para garantir que o índice é válido.
     if (objectIndex < 0 || objectIndex >= g_numObjects) {
         return;
     }
-
-    // 1. Para uma reflexão local, a transformação é aplicada em relação ao centro do objeto.
+    // Para uma reflexão em relação ao centro do objeto, a transformação é composta:
     Point center = getObjectCenter(&g_objects[objectIndex]);
 
-    // 2. A matriz final é uma composição de três transformações: T(c) * R * T(-c)
+    // 1. Translação do objeto para a origem (T(-c))
     Matrix3x3 toOriginMatrix = createTranslationMatrix(-center.x, -center.y);
-    Matrix3x3 reflectionMatrix = createReflectionMatrix(axis); // Sua função que já está correta
+    // 2. Aplicação da reflexão na origem (R(axis))
+    Matrix3x3 reflectionMatrix = createReflectionMatrix(axis);
+    // 3. Translação do objeto de volta para sua posição original (T(c))
     Matrix3x3 fromOriginMatrix = createTranslationMatrix(center.x, center.y);
 
-    // 3. Multiplica as matrizes na ordem correta.
+    // A ordem de multiplicação é crucial: T(c) * R * T(-c)
     Matrix3x3 tempMatrix = multiplyMatrices(reflectionMatrix, toOriginMatrix);
     Matrix3x3 finalMatrix = multiplyMatrices(fromOriginMatrix, tempMatrix);
 
-    // 4. Delega a aplicação da matriz final à função central.
     applyMatrixToObject(objectIndex, finalMatrix);
 }
 
-
-// Função principal corrigida
 void shearObject(int objectIndex, float shx, float shy) {
-
-    // Cláusula de guarda para garantir que o índice é válido.
     if (objectIndex < 0 || objectIndex >= g_numObjects) {
         return;
     }
-
-    // 1. Para um cisalhamento local, a transformação é aplicada em relação ao centro do objeto.
+    // Para um cisalhamento em relação ao centro do objeto, a transformação é composta:
     Point center = getObjectCenter(&g_objects[objectIndex]);
 
-    // 2. A matriz final é uma composição de três transformações: T(c) * R * T(-c)
+    // 1. Translação do objeto para a origem (T(-c))
     Matrix3x3 toOriginMatrix = createTranslationMatrix(-center.x, -center.y);
-    // 3. Criar a matriz de cisalhamento.
+    // 2. Aplicação do cisalhamento na origem (S(shx,shy))
     Matrix3x3 shearMatrix = createShearMatrix(shx, shy);
+    // 3. Translação do objeto de volta para sua posição original (T(c))
     Matrix3x3 fromOrigin = createTranslationMatrix(center.x, center.y);
 
-     // 4. Multiplica as matrizes na ordem correta.
+    // A ordem de multiplicação é crucial: T(c) * Shear * T(-c)
     Matrix3x3 tempMatrix = multiplyMatrices(shearMatrix, toOriginMatrix);
     Matrix3x3 finalMatrix = multiplyMatrices(fromOrigin, tempMatrix);
-    // 5. Chamar applyMatrixToObject.
-    applyMatrixToObject(objectIndex, finalMatrix);
 
-    printf("Função shearObject chamada para o objeto %d com fatores (%.1f, %.1f)\n", objectIndex, shx, shy);
+    applyMatrixToObject(objectIndex, finalMatrix);
 }

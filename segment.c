@@ -1,18 +1,21 @@
-// segment.c
-// Implementação das funções para criar, desenhar e liberar objetos do tipo Segmento de Reta.
+/**
+ * @file segment.c
+ * @brief Implementação das funções para criar, desenhar e liberar objetos do tipo Segmento de Reta.
+ *
+ * Este módulo gerencia todas as operações de baixo nível para a primitiva
+ * geométrica "Segmento".
+ */
 
 #include <GL/glut.h>
 #include <stdio.h>
 #include <math.h>
-
 #include "segment.h"
 #include "point.h"
 
+// --- SEÇÃO DE FUNÇÕES PÚBLICAS ---
 
 Segment createSegment(Point p1, Point p2) {
     Segment s = {p1, p2};
-    // O printf abaixo é para fins de depuração.
-    // printf("[Segment] Novo segmento criado.\n");
     return s;
 }
 
@@ -27,49 +30,43 @@ void drawSegment(Segment* s, int is_selected) {
     // Aumenta a espessura da linha para melhor visualização.
     glLineWidth(2.0f);
 
-    // Desenha a linha na tela usando as primitivas do OpenGL.
     glBegin(GL_LINES);
         glVertex2f(s->p1.x, s->p1.y);
         glVertex2f(s->p2.x, s->p2.y);
     glEnd();
 
-    // Reseta a espessura da linha para o padrão para não afetar outros desenhos.
+    // Reseta a espessura da linha para o padrão.
     glLineWidth(1.0f);
 }
 
 float distPointSegment(Point p, Segment s) {
-    // Vetor que representa o segmento de reta (de p1 para p2).
     float dx = s.p2.x - s.p1.x;
     float dy = s.p2.y - s.p1.y;
 
-    // Se o segmento for, na verdade, um ponto (comprimento zero).
+    // Se o segmento tem comprimento zero, calcula a distância até o ponto.
     if (dx == 0 && dy == 0) {
         float dist_x = p.x - s.p1.x;
         float dist_y = p.y - s.p1.y;
         return sqrtf(dist_x * dist_x + dist_y * dist_y);
     }
 
-    // Calcula o parâmetro 't', que é a projeção do vetor (p - p1) sobre o vetor do segmento.
-    // 't' representa o quão "longe" ao longo da linha infinita o ponto mais próximo está.
+    // Calcula a projeção do ponto sobre a reta infinita.
     float lengthSq = dx * dx + dy * dy;
     float t = ((p.x - s.p1.x) * dx + (p.y - s.p1.y) * dy) / lengthSq;
 
-    // "Clampa" (restringe) o valor de 't' para o intervalo [0, 1].
-    // Se t < 0, o ponto mais próximo é p1. Se t > 1, é p2. Se 0 <= t <= 1, está no meio.
-    // Esta é a lógica crucial que faz o cálculo funcionar para um SEGMENTO, não para uma RETA.
+    // Restringe o parâmetro 't' ao intervalo [0, 1] para o segmento de reta.
     t = fmaxf(0.0f, fminf(1.0f, t));
 
-    // Calcula as coordenadas do ponto mais próximo no segmento de reta.
+    // Encontra o ponto mais próximo no segmento.
     Point closest = {s.p1.x + t * dx, s.p1.y + t * dy};
 
-    // Retorna a distância euclidiana entre o ponto original e o ponto mais próximo encontrado.
+    // Retorna a distância euclidiana.
     float dist_x = p.x - closest.x;
     float dist_y = p.y - closest.y;
     return sqrtf(dist_x * dist_x + dist_y * dist_y);
 }
 
 void freeSegment(Segment* s) {
-    // A estrutura 'Segment' não possui ponteiros internos, então não há o que liberar.
-    // A função existe para manter a consistência com a API do 'objects.c'.
-    // printf("[Segment] Função freeSegment chamada.\n");
+    // A estrutura 'Segment' não possui alocação de memória dinâmica interna.
+    // Esta função existe para manter uma API consistente com o módulo 'objects'.
 }
