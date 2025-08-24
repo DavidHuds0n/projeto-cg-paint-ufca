@@ -44,6 +44,9 @@ As seguintes transformações podem ser aplicadas aos objetos selecionados:
 2.  Certifique-se de que as bibliotecas do OpenGL (GLUT) estão corretamente configuradas no compilador.
 3.  Clique em `Build and Run` (F9).
 
+## 🎮 Como Usar
+As instruções de uso, incluindo a lista completa de comandos e teclas de atalho, são exibidas no console ao iniciar o programa.
+
 ## 👥 Equipe
 
 | Nome Completo | GitHub |
