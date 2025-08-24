@@ -9,10 +9,6 @@ Projeto desenvolvido para a disciplina de Computação Gráfica do curso de Ciê
 - **Disciplina:** Computação Gráfica
 - **Professora:** Luana Batista da Cruz
 
-##  STATUS DO PROJETO
-- ✅ **Concluído**
-- 🚧 **Em Desenvolvimento / A Fazer**
-  
 ## ✨ Funcionalidades
 
 ### 1. Criação de Objetos
@@ -26,19 +22,21 @@ O usuário pode criar os seguintes objetos primários, definindo quais e quantas
 - ✅ Exclusão de qualquer objeto previamente selecionado.
 
 ### 3. Transformações Geométricas
+✅ As transformações, exceto a translação, são realizadas em relação ao centro do objeto, garantindo a sua estabilidade na tela.
+
 As seguintes transformações podem ser aplicadas aos objetos selecionados:
 - ✅ **Translação:** Implementada com a funcionalidade de "Arrastar e Soltar".
-- ✅ **Escala:** Realizada em relação ao centro do objeto.
-- ✅ **Rotação:** Realizada em relação ao centro do objeto.
-- 🚧 **Reflexão**
-- 🚧 **Cisalhamento**
+- ✅ **Escala** 
+- ✅ **Rotação** 
+- ✅ **Reflexão**
+- ✅ **Cisalhamento**
 
 ### 4. Gerenciamento de Arquivos
 - ✅ **Salvar:** Salva todos os objetos da cena em um arquivo externo.
 - ✅ **Carregar:** Carrega e exibe objetos a partir de um arquivo salvo.
 
 ### 5. Animação
-- 🚧 Implementação de uma funcionalidade criativa de animação com os objetos.
+- ✅ Implementação de uma funcionalidade criativa de animação com os objetos.
 
 ## 🔧 Como Compilar e Executar
 
