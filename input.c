@@ -99,25 +99,78 @@ static float distPointToPolygonEdges(GfxPolygon* poly, Point click_point) {
     }
     return min_dist;
 }
+
+// Constantes para os "outcodes" do algoritmo de Cohen-Sutherland
+#define INSIDE 0 // 0000
+#define LEFT   1 // 0001
+#define RIGHT  2 // 0010
+#define BOTTOM 4 // 0100
+#define TOP    8 // 1000
+
+/**
+ * @brief Calcula o "outcode" de 4 bits de um ponto em relação a uma janela retangular.
+ */
+static int computeOutCode(Point p, float xmin, float xmax, float ymin, float ymax) {
+    int code = INSIDE;
+    if (p.x < xmin) code |= LEFT;
+    else if (p.x > xmax) code |= RIGHT;
+    if (p.y < ymin) code |= BOTTOM;
+    else if (p.y > ymax) code |= TOP;
+    return code;
+}
+
+/**
+ * @brief Verifica se um segmento de reta intercepta um retângulo.
+ * Implementa a lógica do algoritmo de Cohen-Sutherland para seleção.
+ */
+static int segmentIntersectsRect(Segment s, float xmin, float xmax, float ymin, float ymax) {
+    int outcode1 = computeOutCode(s.p1, xmin, xmax, ymin, ymax);
+    int outcode2 = computeOutCode(s.p2, xmin, xmax, ymin, ymax);
+
+    if (!(outcode1 | outcode2)) {
+        // Trivialmente aceito: ambos os pontos estão dentro da caixa.
+        return 1;
+    }
+    if (outcode1 & outcode2) {
+        // Trivialmente rejeitado: ambos os pontos estão na mesma região externa.
+        return 0;
+    }
+
+    // Para os demais casos, a linha PODE cruzar a caixa. Para um teste de
+    // seleção, essa possibilidade já é suficiente para considerar uma seleção válida.
+    return 1;
+}
+
+
 // --- Função para Seleção de Objetos (reutilizável) ---
 static int selectObjectAtPoint(Point click_point) {
     int final_found_index = -1;
 
-    // Prioridade 1: Procura pelo PONTO mais próximo.
+    // Prioridade 1: Procura pelo PONTO mais próximo usando Bounding Box para filtrar.
     int closest_point_index = -1;
-    float min_point_dist = CLICK_TOLERANCE;
+    float min_sq_dist_point = -1.0f; // Usamos a distância ao quadrado para evitar sqrtf
+
     for (int i = 0; i < g_numObjects; i++) {
         if (g_objects[i].type == OBJECT_TYPE_POINT) {
             Point* p_obj = (Point*)g_objects[i].data;
-            float dx = click_point.x - p_obj->x;
-            float dy = click_point.y - p_obj->y;
-            float dist = sqrtf((dx * dx) + (dy * dy));
-            if (dist < min_point_dist) {
-                min_point_dist = dist;
-                closest_point_index = i;
+
+            // FASE 1: Filtro Rápido com a Caixa de Tolerância (Método da Professora)
+            if (fabs(p_obj->x - click_point.x) <= CLICK_TOLERANCE &&
+                fabs(p_obj->y - click_point.y) <= CLICK_TOLERANCE)
+            {
+                // FASE 2: Desempate Preciso com a menor distância (Sua Lógica)
+                float dx = p_obj->x - click_point.x;
+                float dy = p_obj->y - click_point.y;
+                float sq_dist = dx * dx + dy * dy;
+
+                if (closest_point_index == -1 || sq_dist < min_sq_dist_point) {
+                    min_sq_dist_point = sq_dist;
+                    closest_point_index = i;
+                }
             }
         }
     }
+
     if (closest_point_index != -1) {
         final_found_index = closest_point_index;
     }
@@ -125,23 +178,37 @@ static int selectObjectAtPoint(Point click_point) {
     // Prioridade 2: Se não achou um ponto, procura pelo SEGMENTO mais próximo.
     if (final_found_index == -1) {
         int closest_segment_index = -1;
-        float min_segment_dist = CLICK_TOLERANCE;
+        float min_dist_segment = CLICK_TOLERANCE;
+
+        // Define a "caixa de tolerância" retangular ao redor do clique.
+        float xmin = click_point.x - CLICK_TOLERANCE;
+        float xmax = click_point.x + CLICK_TOLERANCE;
+        float ymin = click_point.y - CLICK_TOLERANCE;
+        float ymax = click_point.y + CLICK_TOLERANCE;
+
+        // FASE 1: Filtro Rápido com Cohen-Sutherland (Método da Professora)
         for (int i = 0; i < g_numObjects; i++) {
             if (g_objects[i].type == OBJECT_TYPE_SEGMENT) {
                 Segment* s_obj = (Segment*)g_objects[i].data;
-                float dist = distPointSegment(click_point, *s_obj);
-                if (dist < min_segment_dist) {
-                    min_segment_dist = dist;
-                    closest_segment_index = i;
+
+                if (segmentIntersectsRect(*s_obj, xmin, xmax, ymin, ymax)) {
+                    // FASE 2: Desempate Preciso com a menor distância (Sua Lógica)
+                    float dist = distPointSegment(click_point, *s_obj);
+
+                    if (dist < min_dist_segment) {
+                        min_dist_segment = dist;
+                        closest_segment_index = i;
+                    }
                 }
             }
         }
+
         if (closest_segment_index != -1) {
             final_found_index = closest_segment_index;
         }
     }
 
-    // Prioridade 3: Se não achou nada ainda, procura por POLÍGONOS.
+    // Prioridade 3: Polígonos (sem alterações, sua lógica já é perfeita)
     if (final_found_index == -1) {
         int closest_poly_index = -1;
         float min_poly_dist = -1.0f;
