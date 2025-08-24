@@ -26,8 +26,8 @@ O usuário pode criar os seguintes objetos primários, definindo quais e quantas
 
 As seguintes transformações podem ser aplicadas aos objetos selecionados:
 - ✅ **Translação:** Implementada com a funcionalidade de "Arrastar e Soltar".
-- ✅ **Escala** 
-- ✅ **Rotação** 
+- ✅ **Escala** 
+- ✅ **Rotação** 
 - ✅ **Reflexão**
 - ✅ **Cisalhamento**
 
@@ -35,16 +35,17 @@ As seguintes transformações podem ser aplicadas aos objetos selecionados:
 - ✅ **Salvar:** Salva todos os objetos da cena em um arquivo externo.
 - ✅ **Carregar:** Carrega e exibe objetos a partir de um arquivo salvo.
 
-### 5. Animação
-- ✅ Implementação de uma funcionalidade criativa de animação com os objetos.
-
+### 5. Animação e Simulação Física
+- ✅ Implementação de um sistema de animação baseado em física que permite aos objetos interagir de forma realista.
+  
 ## 🔧 Como Compilar e Executar
 
 1.  Abra o arquivo `Rabisquim.cbp` no Code::Blocks.
 2.  Certifique-se de que as bibliotecas do OpenGL (GLUT) estão corretamente configuradas no compilador.
 3.  Clique em `Build and Run` (F9).
 
-## 🎮 Como Usar
+## 🎮 Comandos do Programa
+
 As instruções de uso, incluindo a lista completa de comandos e teclas de atalho, são exibidas no console ao iniciar o programa.
 
 ## 👥 Equipe
@@ -58,6 +59,6 @@ As instruções de uso, incluindo a lista completa de comandos e teclas de atalh
 
 ## 📂 Apresentação
 
-- [Link para os Slides da Apresentação]
+[Slides de Apresentação do Projeto](https://www.canva.com/design/DAGw01s627Q/BwhAeneoHE8mQXTq5hissA/edit)
 
 ---
