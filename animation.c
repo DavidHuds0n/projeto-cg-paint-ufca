@@ -21,6 +21,10 @@
 
 AnimSlot g_anim[MAX_OBJECTS];
 
+// --- SEÇÃO DE VARIÁVEIS GLOBAIS EXTERNAS ---
+extern int g_windowWidth;
+extern int g_windowHeight;
+
 // --- SEÇÃO DE FUNÇÕES AUXILIARES (IMPLEMENTAÇÃO PRIVADA) ---
 
 /**
@@ -141,16 +145,16 @@ void anim_step(float dtim) {
             translateObject(i, -minx, 0.0f);
             g_anim[i].vx = -g_anim[i].vx * g_anim[i].e;
         }
-        if (maxx > WINDOW_WIDTH && g_anim[i].vx > 0.0f) {
-            translateObject(i, WINDOW_WIDTH - maxx, 0.0f);
+        if (maxx > g_windowWidth && g_anim[i].vx > 0.0f) {
+            translateObject(i, g_windowWidth - maxx, 0.0f);
             g_anim[i].vx = -g_anim[i].vx * g_anim[i].e;
         }
         if (miny < 0.0f && g_anim[i].vy < 0.0f) {
             translateObject(i, 0.0f, -miny);
             g_anim[i].vy = -g_anim[i].vy * g_anim[i].e;
         }
-        if (maxy > WINDOW_HEIGHT && g_anim[i].vy > 0.0f) {
-            translateObject(i, 0.0f, WINDOW_HEIGHT - maxy);
+        if (maxy > g_windowHeight && g_anim[i].vy > 0.0f) {
+            translateObject(i, 0.0f, g_windowHeight - maxy);
             g_anim[i].vy = -g_anim[i].vy * g_anim[i].e;
         }
 

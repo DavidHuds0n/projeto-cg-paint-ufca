@@ -166,7 +166,7 @@
 	"objects.h"
 	"point.h"
 
-1756045896 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\main.c
+1756050703 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\main.c
 	<GL/glut.h>
 	<stdio.h>
 	<stdlib.h>
@@ -179,6 +179,7 @@
 	"polygon.h"
 	"transformations.h"
 	"animation.h"
+	"file_io.h"
 
 1756050108 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\render.h
 
@@ -249,5 +250,152 @@
 
 1756049124 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\projeto-cg-paint-ufca\file_io.h
 	<stdlib.h>
+	<stdio.h>
+
+1756049426 source:c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\animation.c
+	<math.h>
+	<string.h>
+	<GL/glut.h>
+	"animation.h"
+	"objects.h"
+	"transformations.h"
+	"utils.h"
+	"input.h"
+	"config.h"
+
+1756049340 c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\animation.h
+	"config.h"
+
+1756050263 c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\config.h
+
+1756048472 c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\objects.h
+	"point.h"
+	"segment.h"
+	"polygon.h"
+	"config.h"
+
+1756049577 c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\point.h
+
+1756049647 c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\segment.h
+	"point.h"
+
+1756049898 c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\polygon.h
+	"point.h"
+	"config.h"
+
+1756048021 c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\transformations.h
+	"objects.h"
+	"point.h"
+
+1756048975 c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\utils.h
+	"objects.h"
+	"point.h"
+
+1756047905 c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\input.h
+	"point.h"
+	"config.h"
+	"polygon.h"
+
+1756049200 source:c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\file_io.c
+	"file_io.h"
+	"objects.h"
+	"point.h"
+	"segment.h"
+	"polygon.h"
+	<stdio.h>
+	<string.h>
+
+1756049124 c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\file_io.h
+	<stdlib.h>
+	<stdio.h>
+
+1756047715 source:c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\input.c
+	<GL/glut.h>
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+	"config.h"
+	"input.h"
+	"objects.h"
+	"point.h"
+	"segment.h"
+	"polygon.h"
+	"transformations.h"
+	"file_io.h"
+	"animation.h"
+
+1756050703 source:c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\main.c
+	<GL/glut.h>
+	<stdio.h>
+	<stdlib.h>
+	"config.h"
+	"render.h"
+	"input.h"
+	"objects.h"
+	"point.h"
+	"segment.h"
+	"polygon.h"
+	"transformations.h"
+	"animation.h"
+	"file_io.h"
+
+1756050108 c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\render.h
+
+1756048941 source:c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\objects.c
+	<stdio.h>
+	<stdlib.h>
+	<GL/glut.h>
+	"objects.h"
+	"point.h"
+	"segment.h"
+	"polygon.h"
+	"config.h"
+	"input.h"
+	"animation.h"
+
+1756049591 source:c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\point.c
+	<GL/glut.h>
+	<stdio.h>
+	"point.h"
+	"config.h"
+
+1756049980 source:c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\polygon.c
+	<GL/glut.h>
+	<GL/glu.h>
+	<stdio.h>
+	"polygon.h"
+	"point.h"
+	"config.h"
+	"utils.h"
+	"objects.h"
+
+1756050128 source:c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\render.c
+	<stdio.h>
+	<GL/glut.h>
+	"render.h"
+	"objects.h"
+
+1756049715 source:c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\segment.c
+	<GL/glut.h>
+	<stdio.h>
+	<math.h>
+	"segment.h"
+	"point.h"
+
+1756048233 source:c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\transformations.c
+	<stdio.h>
+	<math.h>
+	"transformations.h"
+	"objects.h"
+	"point.h"
+	"segment.h"
+	"polygon.h"
+	"utils.h"
+
+1756049004 source:c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\utils.c
+	"utils.h"
+	"objects.h"
+	"segment.h"
+	"polygon.h"
 	<stdio.h>
 

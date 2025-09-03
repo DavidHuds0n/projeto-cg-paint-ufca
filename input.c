@@ -32,6 +32,10 @@ int g_polygonVertexCount = 0;
 Point g_lastMousePos = {0.0f, 0.0f};
 Point g_currentMousePos = {0.0f, 0.0f};
 
+// --- SEÇÃO DE VARIÁVEIS GLOBAIS EXTERNAS ---
+extern int g_windowWidth;
+extern int g_windowHeight;
+
 // --- SEÇÃO DE FUNÇÕES AUXILIARES ---
 
 /**
@@ -125,21 +129,66 @@ static int computeOutCode(Point p, float xmin, float xmax, float ymin, float yma
 }
 
 /**
- * @brief Verifica se um segmento de reta intercepta um retângulo.
- * @param s O segmento de reta.
- * @param xmin, xmax, ymin, ymax As coordenadas do retângulo.
- * @return 1 se o segmento pode interceptar, 0 se é trivialmente rejeitado.
+ * @brief Verifica se um segmento de reta intercepta um retângulo usando o algoritmo completo de Cohen-Sutherland.
+ * @param s O segmento de reta a ser testado.
+ * @param xmin, xmax, ymin, ymax As coordenadas do retângulo de tolerância.
+ * @return 1 se o segmento intercepta o retângulo, 0 caso contrário.
  */
 static int segmentIntersectsRect(Segment s, float xmin, float xmax, float ymin, float ymax) {
-    int outcode1 = computeOutCode(s.p1, xmin, xmax, ymin, ymax);
-    int outcode2 = computeOutCode(s.p2, xmin, xmax, ymin, ymax);
-    if (!(outcode1 | outcode2)) {
-        return 1; // Trivialmente aceito
+    // Copia os pontos do segmento para poder modificá-los.
+    Point p1 = s.p1;
+    Point p2 = s.p2;
+
+    // Calcula os outcodes dos pontos iniciais.
+    int outcode1 = computeOutCode(p1, xmin, xmax, ymin, ymax);
+    int outcode2 = computeOutCode(p2, xmin, xmax, ymin, ymax);
+
+    while (1) {
+        // Caso 1: Aceitação trivial. Ambos os pontos estão dentro do retângulo.
+        if (!(outcode1 | outcode2)) {
+            return 1;
+        }
+        // Caso 2: Rejeição trivial. Ambos os pontos estão na mesma região externa.
+        else if (outcode1 & outcode2) {
+            return 0;
+        }
+        // Caso 3: Caso não trivial. O segmento pode cruzar o retângulo.
+        else {
+            float x, y; // Novas coordenadas do ponto de interseção.
+
+            // Seleciona um ponto que está fora do retângulo.
+            int outcodeOut = outcode1 ? outcode1 : outcode2;
+
+            // Calcula o ponto de interseção com a fronteira correspondente.
+            // A lógica é baseada na equação da reta.
+            if (outcodeOut & TOP) {           // Ponto está acima do retângulo.
+                x = p1.x + (p2.x - p1.x) * (ymax - p1.y) / (p2.y - p1.y); //
+                y = ymax; //
+            } else if (outcodeOut & BOTTOM) { // Ponto está abaixo do retângulo.
+                x = p1.x + (p2.x - p1.x) * (ymin - p1.y) / (p2.y - p1.y); //
+                y = ymin; //
+            } else if (outcodeOut & RIGHT) {  // Ponto está à direita do retângulo.
+                y = p1.y + (p2.y - p1.y) * (xmax - p1.x) / (p2.x - p1.x); //
+                x = xmax; //
+            } else { // outcodeOut & LEFT -> Ponto está à esquerda do retângulo
+                y = p1.y + (p2.y - p1.y) * (xmin - p1.x) / (p2.x - p1.x); //
+                x = xmin; //
+            }
+
+            // Atualiza o ponto que estava fora com o novo ponto de interseção
+            // e recalcula o seu outcode. O loop continuará até que se chegue
+            // a um caso de aceitação ou rejeição trivial.
+            if (outcodeOut == outcode1) {
+                p1.x = x;
+                p1.y = y;
+                outcode1 = computeOutCode(p1, xmin, xmax, ymin, ymax);
+            } else {
+                p2.x = x;
+                p2.y = y;
+                outcode2 = computeOutCode(p2, xmin, xmax, ymin, ymax);
+            }
+        }
     }
-    if (outcode1 & outcode2) {
-        return 0; // Trivialmente rejeitado
-    }
-    return 1; // Pode interceptar
 }
 
 /**
@@ -364,7 +413,7 @@ void specialKeysCallback(int key, int x, int y) {
  * @param y Coordenada Y do clique.
  */
 void mouseCallback(int button, int state, int x, int y) {
-    float gl_y = WINDOW_HEIGHT - (float)y;
+    float gl_y = g_windowHeight - (float)y;
     Point click_point = { (float)x, gl_y };
 
     if (state == GLUT_DOWN) {
@@ -427,7 +476,7 @@ void mouseCallback(int button, int state, int x, int y) {
  */
 void motionCallback(int x, int y) {
     if (g_isDragging && g_currentMode == MODE_TRANSLATE && g_selectedObjectIndex != -1) {
-        float gl_y = WINDOW_HEIGHT - (float)y;
+        float gl_y = g_windowHeight - (float)y;
         Point currentMousePos = {(float)x, gl_y};
         float dx = currentMousePos.x - g_lastMousePos.x;
         float dy = currentMousePos.y - g_lastMousePos.y;
@@ -444,7 +493,7 @@ void motionCallback(int x, int y) {
  */
 void passiveMotionCallback(int x, int y) {
     g_currentMousePos.x = (float)x;
-    g_currentMousePos.y = WINDOW_HEIGHT - (float)y;
+    g_currentMousePos.y = g_windowHeight - (float)y;
     if (g_currentMode == MODE_CREATE_SEGMENT && g_segmentClickCount == 1) {
         glutPostRedisplay();
     }

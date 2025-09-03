@@ -22,7 +22,36 @@
 #include "animation.h"
 #include "file_io.h"
 
+
+// --- SEÇÃO DE VARIÁVEIS GLOBAIS DA JANELA ---
+int g_windowWidth = WINDOW_WIDTH;
+int g_windowHeight = WINDOW_HEIGHT;
+
 // --- SEÇÃO DE FUNÇÕES AUXILIARES ---
+
+/**
+ * @brief Callback para quando a janela é redimensionada.
+ * * Responsável por atualizar o viewport e a projeção ortográfica do OpenGL
+ * para corresponderem às novas dimensões da janela.
+ * @param w A nova largura da janela.
+ * @param h A nova altura da janela.
+ */
+void reshapeCallback(int w, int h) {
+    // Atualiza as variáveis globais com as novas dimensões.
+    g_windowWidth = w;
+    g_windowHeight = h > 0 ? h : 1; // Evita divisão por zero se a altura for 0.
+
+    // Define a área de desenho do OpenGL para ocupar a janela inteira.
+    glViewport(0, 0, g_windowWidth, g_windowHeight);
+
+    // Atualiza o sistema de coordenadas (projeção) para corresponder ao novo tamanho.
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0, g_windowWidth, 0, g_windowHeight);
+
+    // Volta para a matriz de modelo-vista para as operações de desenho.
+    glMatrixMode(GL_MODELVIEW);
+}
 
 /**
  * @brief Funcao de callback para redesenhar a tela.
@@ -34,6 +63,7 @@ void displayCallback() {
     renderAllObjects();
     glutSwapBuffers();
 }
+
 
 /**
  * @brief Configura o ambiente de renderizacao 2D do OpenGL.
@@ -98,6 +128,7 @@ int main(int argc, char **argv) {
     glutPassiveMotionFunc(passiveMotionCallback);
     glutSpecialFunc(specialKeysCallback);
     glutTimerFunc(16, timerCallback, 0);
+    glutReshapeFunc(reshapeCallback);
 
     // 4. Bloco de instrucoes para o console (crucial para o usuario)
     printf("\n======================= Rabisquim - Instrucoes =======================\n\n");
