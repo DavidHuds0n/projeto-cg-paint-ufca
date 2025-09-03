@@ -388,8 +388,8 @@ void specialKeysCallback(int key, int x, int y) {
     // Ações condicionadas ao modo de operação
     if (g_selectedObjectIndex != -1 && g_currentMode == MODE_ROTATE) {
         switch (key) {
-            case GLUT_KEY_LEFT: rotateObject(g_selectedObjectIndex, 20); break;
-            case GLUT_KEY_RIGHT: rotateObject(g_selectedObjectIndex, -20); break;
+            case GLUT_KEY_LEFT: rotateObject(g_selectedObjectIndex, 5); break;
+            case GLUT_KEY_RIGHT: rotateObject(g_selectedObjectIndex, -5); break;
         }
         glutPostRedisplay();
     }

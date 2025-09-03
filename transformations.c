@@ -189,26 +189,38 @@ void scaleObject(int objectIndex, float sx, float sy) {
     applyMatrixToObject(objectIndex, finalMatrix);
 }
 
-
 void rotateObject(int objectIndex, float angle) {
     if (objectIndex < 0 || objectIndex >= g_numObjects) {
         return;
     }
-    // Para uma rotação em torno do centro do objeto, a transformação é composta:
-    Point objectCenter = getObjectCenter(&g_objects[objectIndex]);
 
-    // 1. Translação do objeto para a origem (T(-c))
-    Matrix3x3 toOriginMatrix = createTranslationMatrix(-objectCenter.x, -objectCenter.y);
-    // 2. Aplicação da rotação na origem (R(angle))
-    Matrix3x3 rotationMatrix = createRotationMatrix(angle);
-    // 3. Translação do objeto de volta para sua posição original (T(c))
-    Matrix3x3 fromOriginMatrix = createTranslationMatrix(objectCenter.x, objectCenter.y);
+    Object* obj = &g_objects[objectIndex];
 
-    // A ordem de multiplicação é crucial: T(c) * R * T(-c)
-    Matrix3x3 tempMatrix = multiplyMatrices(rotationMatrix, toOriginMatrix);
-    Matrix3x3 compositeMatrix = multiplyMatrices(fromOriginMatrix, tempMatrix);
+    // Verifica se o objeto é um ponto para aplicar a regra especial.
+    if (obj->type == OBJECT_TYPE_POINT) {
+        // REGRA ESPECIAL PARA PONTOS: Rotação em torno da origem (0,0).
+        // A matriz de transformação é apenas a matriz de rotação pura.
+        Matrix3x3 rotationMatrix = createRotationMatrix(angle);
+        applyMatrixToObject(objectIndex, rotationMatrix);
 
-    applyMatrixToObject(objectIndex, compositeMatrix);
+    } else {
+        // REGRA GERAL (Segmentos, Polígonos): Rotação em torno do centro do objeto.
+        // Para isso, a transformação é composta: T(c) * R(angle) * T(-c)
+        Point objectCenter = getObjectCenter(obj);
+
+        // 1. Translação do objeto para a origem (T(-c))
+        Matrix3x3 toOriginMatrix = createTranslationMatrix(-objectCenter.x, -objectCenter.y);
+        // 2. Aplicação da rotação na origem (R(angle))
+        Matrix3x3 rotationMatrix = createRotationMatrix(angle);
+        // 3. Translação do objeto de volta para sua posição original (T(c))
+        Matrix3x3 fromOriginMatrix = createTranslationMatrix(objectCenter.x, objectCenter.y);
+
+        // A ordem de multiplicação é crucial: T(c) * R * T(-c)
+        Matrix3x3 tempMatrix = multiplyMatrices(rotationMatrix, toOriginMatrix);
+        Matrix3x3 compositeMatrix = multiplyMatrices(fromOriginMatrix, tempMatrix);
+
+        applyMatrixToObject(objectIndex, compositeMatrix);
+    }
 }
 
 void reflectObject(int objectIndex, int axis) {

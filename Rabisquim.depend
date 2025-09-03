@@ -252,7 +252,7 @@
 	<stdlib.h>
 	<stdio.h>
 
-1756049426 source:c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\animation.c
+1756942442 source:c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\animation.c
 	<math.h>
 	<string.h>
 	<GL/glut.h>
@@ -309,7 +309,7 @@
 	<stdlib.h>
 	<stdio.h>
 
-1756047715 source:c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\input.c
+1756942330 source:c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\input.c
 	<GL/glut.h>
 	<stdio.h>
 	<stdlib.h>
@@ -324,7 +324,7 @@
 	"file_io.h"
 	"animation.h"
 
-1756050703 source:c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\main.c
+1756942244 source:c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\main.c
 	<GL/glut.h>
 	<stdio.h>
 	<stdlib.h>
@@ -382,7 +382,7 @@
 	"segment.h"
 	"point.h"
 
-1756048233 source:c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\transformations.c
+1756943012 source:c:\users\outer\downloads\grupo_01_projeto-cg-paint-ufca\projeto-cg-paint-ufca\transformations.c
 	<stdio.h>
 	<math.h>
 	"transformations.h"
