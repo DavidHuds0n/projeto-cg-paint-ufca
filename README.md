@@ -1,64 +1,73 @@
-# Construção de um "Paint" - Projeto de Computação Gráfica
+# Rabisquim - Editor Gráfico 2D com Simulação Física
 
 ![OpenGL](https://img.shields.io/badge/OpenGL-5586A4?style=for-the-badge&logo=opengl)
 ![C](https://img.shields.io/badge/C-00599C?style=for-the-badge&logo=c)
 
-Projeto desenvolvido para a disciplina de Computação Gráfica do curso de Ciência da Computação da Universidade Federal do Cariri (UFCA).
+**Rabisquim** é um editor gráfico vetorial 2D, similar ao Paint, desenvolvido em C com a biblioteca OpenGL. O projeto permite a criação e manipulação de primitivas geométricas, aplicação de transformações, salvamento de cenas em arquivo e uma simulação de física básica para animação dos objetos.
 
-- **Instituição:** Universidade Federal do Cariri - UFCA
+Este projeto foi desenvolvido como avaliação para a disciplina de **Computação Gráfica** do curso de Ciência da Computação da Universidade Federal do Cariri (UFCA).
+
+- **Instituição:** Universidade Federal do Cariri (UFCA)
 - **Disciplina:** Computação Gráfica
 - **Professora:** Luana Batista da Cruz
 
 ## ✨ Funcionalidades
 
-### 1. Criação de Objetos
-O usuário pode criar os seguintes objetos primários, definindo quais e quantas vezes desejar:
-- ✅ Ponto
-- ✅ Segmento de Reta
-- ✅ Polígono
+O projeto implementa todas as funcionalidades solicitadas na especificação do trabalho.
 
-### 2. Seleção e Exclusão
-- ✅ Seleção individual de qualquer objeto primário na tela.
-- ✅ Exclusão de qualquer objeto previamente selecionado.
+### 1. Criação de Primitivas Gráficas
+- ✅ **Ponto:** Criação com um clique.
+- ✅ **Segmento de Reta:** Definido por dois cliques.
+- ✅ **Polígono:** Vértices adicionados a cada clique, finalizado com o botão direito do mouse.
+
+### 2. Seleção e Gerenciamento de Objetos
+- ✅ **Seleção Individual:** Qualquer objeto na tela pode ser selecionado com um clique.
+- ✅ **Exclusão:** O objeto selecionado pode ser removido com a tecla `DELETE`.
+- ✅ **Responsividade:** A interface e os cálculos se adaptam dinamicamente ao redimensionamento da janela.
 
 ### 3. Transformações Geométricas
-✅ As transformações, exceto a translação, são realizadas em relação ao centro do objeto, garantindo a sua estabilidade na tela.
+- ✅ **Translação:** Implementada com a funcionalidade "Arrastar e Soltar" (*Drag and Drop*).
+- ✅ **Rotação:** Realizada em torno do centro do objeto.
+  - ⚠️ **Exceção:** Para pontos, a rotação ocorre em relação à **origem do sistema de coordenadas (0,0)**.
+- ✅ **Escala:** Realizada em torno do centro do objeto.
+  - ⚠️ **Exceção:** A transformação de escala não se aplica a pontos.
+- ✅ **Reflexão (Espelhamento):** Aplicada em relação a um eixo (horizontal ou vertical) que passa pelo centro do objeto.
+- ✅ **Cisalhamento (Shear):** Deforma o objeto em relação a eixos que passam pelo seu centro.
 
-As seguintes transformações podem ser aplicadas aos objetos selecionados:
-- ✅ **Translação:** Implementada com a funcionalidade de "Arrastar e Soltar".
-- ✅ **Escala** 
-- ✅ **Rotação** 
-- ✅ **Reflexão**
-- ✅ **Cisalhamento**
+### 4. Persistência de Dados
+- ✅ **Salvar Cena:** Salva todos os objetos criados em um arquivo `scene.txt`.
+- ✅ **Carregar Cena:** Carrega e recria todos os objetos a partir do arquivo `scene.txt`.
 
-### 4. Gerenciamento de Arquivos
-- ✅ **Salvar:** Salva todos os objetos da cena em um arquivo externo.
-- ✅ **Carregar:** Carrega e exibe objetos a partir de um arquivo salvo.
+### 5. Animação com Física
+- ✅ **Simulação:** Um sistema de física simples foi implementado, permitindo que os objetos tenham velocidade, sofram com a gravidade e colidam com as bordas da tela.
+- ✅ **Interatividade:** É possível "chutar" os objetos na direção do mouse e controlar individualmente suas propriedades físicas.
 
-### 5. Animação e Simulação Física
-- ✅ Implementação de um sistema de animação baseado em física que permite aos objetos interagir de forma realista.
-  
 ## 🔧 Como Compilar e Executar
 
-1.  Abra o arquivo `Rabisquim.cbp` no Code::Blocks.
-2.  Certifique-se de que as bibliotecas do OpenGL (GLUT) estão corretamente configuradas no compilador.
-3.  Clique em `Build and Run` (F9).
+### Pré-requisitos
+- É necessário ter as bibliotecas do **OpenGL (GLUT)** instaladas e configuradas no seu ambiente de desenvolvimento.
+- O projeto foi desenvolvido e testado utilizando o **Code::Blocks** com o compilador MinGW no Windows.
+
+### Passos para Execução
+1.  Abra o arquivo de projeto `Rabisquim.cbp` no Code::Blocks.
+2.  Garanta que o *linker* do seu compilador está configurado para encontrar as bibliotecas do GLUT (ex: `-lfreeglut -lopengl32 -lglu32`).
+3.  Compile e execute o projeto (atalho padrão: `F9`).
 
 ## 🎮 Comandos do Programa
 
-As instruções de uso, incluindo a lista completa de comandos e teclas de atalho, são exibidas no console ao iniciar o programa.
+Uma lista completa e detalhada de todos os comandos de teclado e mouse é exibida no console no momento em que a aplicação é iniciada.
 
 ## 👥 Equipe
 
-| Nome Completo | GitHub |
-|---|---|
-| David Hudson | [@DavidHuds0n](https://github.com/DavidHuds0n) |
-| Luana Teles | [@lua-teles](https://github.com/lua-teles) |
-| Vitória Pontes | [@VitoriaPontes](https://github.com/VitoriaPontes) |
-| Najla Cavalcante | [@najlacavalcante](https://github.com/najlacavalcante) |
+| Nome Completo     | GitHub                                       |
+| ----------------- | -------------------------------------------- |
+| David Hudson      | [@DavidHuds0n](https://github.com/DavidHuds0n) |
+| Luana Teles       | [@lua-teles](https://github.com/lua-teles)   |
+| Vitória Pontes    | [@VitoriaPontes](https://github.com/VitoriaPontes) |
+| Najla Cavalcante  | [@najlacavalcante](https://github.com/najlacavalcante) |
 
-## 📂 Apresentação
+## 📂 Apresentação do Projeto
 
-[Slides de Apresentação do Projeto](https://www.canva.com/design/DAGw01s627Q/BwhAeneoHE8mQXTq5hissA/edit)
+[▶️ **Clique aqui para ver os slides da apresentação**](https://www.canva.com/design/DAGw01s627Q/BwhAeneoHE8mQXTq5hissA/edit)
 
 ---
