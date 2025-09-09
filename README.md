@@ -3,7 +3,7 @@
 ![OpenGL](https://img.shields.io/badge/OpenGL-5586A4?style=for-the-badge&logo=opengl)
 ![C](https://img.shields.io/badge/C-00599C?style=for-the-badge&logo=c)
 
-**Rabisquim** é um editor gráfico vetorial 2D, similar ao Paint, desenvolvido em C com a biblioteca OpenGL. O projeto permite a criação e manipulação de primitivas geométricas, aplicação de transformações, salvamento de cenas em arquivo e uma simulação de física básica para animação dos objetos.
+**Rabisquim** é um editor gráfico vetorial 2D, similar ao Paint, desenvolvido em C com a biblioteca OpenGL. O projeto permite a criação e manipulação de primitivas geométricas, aplicação de transformações, algoritmos geométricos, salvamento de cenas em arquivo e uma simulação de física básica.
 
 Este projeto foi desenvolvido como avaliação para a disciplina de **Computação Gráfica** do curso de Ciência da Computação da Universidade Federal do Cariri (UFCA).
 
@@ -12,8 +12,6 @@ Este projeto foi desenvolvido como avaliação para a disciplina de **Computaç�
 - **Professora:** Luana Batista da Cruz
 
 ## ✨ Funcionalidades
-
-O projeto implementa todas as funcionalidades solicitadas na especificação do trabalho.
 
 ### 1. Criação de Primitivas Gráficas
 - ✅ **Ponto:** Criação com um clique.
@@ -34,11 +32,16 @@ O projeto implementa todas as funcionalidades solicitadas na especificação do 
 - ✅ **Reflexão (Espelhamento):** Aplicada em relação a um eixo (horizontal ou vertical) que passa pelo centro do objeto.
 - ✅ **Cisalhamento (Shear):** Deforma o objeto em relação a eixos que passam pelo seu centro.
 
-### 4. Persistência de Dados
+### 4. Algoritmos Geométricos Avançados
+- ✅ **Fecho Convexo:** Permite transformar qualquer polígono côncavo em seu fecho convexo correspondente.
+  - **Algoritmo Utilizado:** Marcha de Jarvis (*Jarvis March / Gift Wrapping*).
+  - **Ativação:** Com um polígono selecionado, a transformação é acionada por uma tecla de atalho.
+
+### 5. Persistência de Dados
 - ✅ **Salvar Cena:** Salva todos os objetos criados em um arquivo `scene.txt`.
 - ✅ **Carregar Cena:** Carrega e recria todos os objetos a partir do arquivo `scene.txt`.
 
-### 5. Animação com Física
+### 6. Animação com Física
 - ✅ **Simulação:** Um sistema de física simples foi implementado, permitindo que os objetos tenham velocidade, sofram com a gravidade e colidam com as bordas da tela.
 - ✅ **Interatividade:** É possível "chutar" os objetos na direção do mouse e controlar individualmente suas propriedades físicas.
 
