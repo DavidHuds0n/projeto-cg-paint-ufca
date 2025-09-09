@@ -320,7 +320,7 @@ void keyboardCallback(unsigned char key, int x, int y) {
                         selectedObject->data = newConvexHull; // Atualiza o ponteiro para o novo.
                         // printf("[INFO] Poligono transformado em seu fecho convexo.\n");
                     } else {
-                        printf("[AVISO] Nao foi possível calcular o fecho convexo (poligono pode ter menos de 3 vertices).\n");
+                        printf("[AVISO] Nao foi possivel calcular o fecho convexo (poligono pode ter menos de 3 vertices).\n");
                     }
                 } else {
                     printf("[AVISO] O objeto selecionado nao eh um poligono. Selecione um poligono para usar esta funcao.\n");

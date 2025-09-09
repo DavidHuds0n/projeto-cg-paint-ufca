@@ -27,7 +27,7 @@ void drawPoint(Point* p, int is_selected) {
     }
 
     // Aumenta o tamanho do ponto para torná-lo mais visível e fácil de selecionar.
-    glPointSize(CLICK_TOLERANCE / 2.0f);
+    glPointSize(CLICK_TOLERANCE / 1.3f);
 
     glBegin(GL_POINTS);
         glVertex2f(p->x, p->y);

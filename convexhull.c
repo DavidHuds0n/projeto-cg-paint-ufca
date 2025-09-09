@@ -44,7 +44,7 @@ GfxPolygon* jarvisMarch(GfxPolygon* poly) {
     }
 
     // 2. Encontrar o ponto de partida: o ponto mais à esquerda (menor X).
-    // Em caso de empate, o de menor Y é escolhido, conforme a especificação.
+    // Em caso de empate, o de menor Y é escolhido.
     int leftMostIndex = 0;
     for (int i = 1; i < poly->numVertices; i++) {
         if (poly->vertices[i].x < poly->vertices[leftMostIndex].x) {

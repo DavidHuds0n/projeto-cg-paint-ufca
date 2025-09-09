@@ -39,6 +39,10 @@
 		</Unit>
 		<Unit filename="animation.h" />
 		<Unit filename="config.h" />
+		<Unit filename="convexhull.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="convexhull.h" />
 		<Unit filename="file_io.c">
 			<Option compilerVar="CC" />
 		</Unit>

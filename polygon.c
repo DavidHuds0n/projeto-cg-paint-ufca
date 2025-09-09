@@ -73,25 +73,25 @@ void drawPolygon(GfxPolygon* poly, int is_selected) {
     glEnd();
     glPointSize(1.0f);
 
-    // --- Desenho do Centroide (Ponto Central) ---
-    // Desenha um ponto para indicar o centro de rotação/escala do polígono.
-    if (poly->numVertices > 0) {
-        // Cria um objeto temporário para chamar a função genérica getObjectCenter.
-        Object tempObj;
-        tempObj.type = OBJECT_TYPE_POLYGON;
-        tempObj.data = poly;
-        Point center = getObjectCenter(&tempObj);
-
-        // Desenha o ponto central como um pequeno ponto preto.
-        glColor3f(0.0f, 0.0f, 0.0f);
-        glPointSize(5.0f);
-        glBegin(GL_POINTS);
-            glVertex2f(center.x, center.y);
-        glEnd();
-
-        // Reseta o tamanho do ponto.
-        glPointSize(1.0f);
-    }
+//    // --- Desenho do Centroide (Ponto Central) ---
+//    // Desenha um ponto para indicar o centro de rotação/escala do polígono.
+//    if (poly->numVertices > 0) {
+//        // Cria um objeto temporário para chamar a função genérica getObjectCenter.
+//        Object tempObj;
+//        tempObj.type = OBJECT_TYPE_POLYGON;
+//        tempObj.data = poly;
+//        Point center = getObjectCenter(&tempObj);
+//
+//        // Desenha o ponto central como um pequeno ponto preto.
+//        glColor3f(0.0f, 0.0f, 0.0f);
+//        glPointSize(5.0f);
+//        glBegin(GL_POINTS);
+//            glVertex2f(center.x, center.y);
+//        glEnd();
+//
+//        // Reseta o tamanho do ponto.
+//        glPointSize(1.0f);
+//    }
 }
 
 void freePolygon(GfxPolygon* poly) {

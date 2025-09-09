@@ -466,7 +466,7 @@
 	<stdlib.h>
 	<stdio.h>
 
-1757382749 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\main.c
+1757386512 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\main.c
 	<GL/glut.h>
 	<stdio.h>
 	<stdlib.h>
@@ -495,13 +495,13 @@
 	"input.h"
 	"animation.h"
 
-1757382749 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\point.c
+1757419859 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\point.c
 	<GL/glut.h>
 	<stdio.h>
 	"point.h"
 	"config.h"
 
-1757382749 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\polygon.c
+1757419732 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\polygon.c
 	<GL/glut.h>
 	<GL/glu.h>
 	<stdio.h>
@@ -541,7 +541,7 @@
 	"polygon.h"
 	<stdio.h>
 
-1757385654 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\input.c
+1757386835 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\input.c
 	<GL/glut.h>
 	<stdio.h>
 	<stdlib.h>
