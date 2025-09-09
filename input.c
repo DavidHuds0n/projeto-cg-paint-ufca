@@ -20,6 +20,7 @@
 #include "transformations.h"
 #include "file_io.h"
 #include "animation.h"
+#include "convexhull.h"
 
 // --- SEÇÃO DE VARIÁVEIS GLOBAIS DE ESTADO ---
 
@@ -300,6 +301,33 @@ void keyboardCallback(unsigned char key, int x, int y) {
         case 'm': case 'M':
             if (objectIsSelected) g_currentMode = MODE_REFLECT;
             else printf("[AVISO] Selecione um objeto para o modo de reflexão.\n");
+            break;
+
+        // --- LÓGICA PARA O FECHO CONVEXO ---
+        case 'c': case 'C':
+            if (objectIsSelected) {
+                Object* selectedObject = &g_objects[g_selectedObjectIndex];
+                if (selectedObject->type == OBJECT_TYPE_POLYGON) {
+                    // printf("[INFO] Acionando calculo de fecho convexo...\n");
+                    GfxPolygon* originalPolygon = (GfxPolygon*)selectedObject->data;
+
+                    // Chama o algoritmo da Marcha de Jarvis.
+                    GfxPolygon* newConvexHull = jarvisMarch(originalPolygon);
+
+                    // Se o algoritmo foi bem-sucedido, substitui o polígono.
+                    if (newConvexHull != NULL) {
+                        free(originalPolygon); // Libera a memória do polígono antigo.
+                        selectedObject->data = newConvexHull; // Atualiza o ponteiro para o novo.
+                        printf("[INFO] Poligono transformado em seu fecho convexo.\n");
+                    } else {
+                        printf("[AVISO] Nao foi possível calcular o fecho convexo (poligono pode ter menos de 3 vertices).\n");
+                    }
+                } else {
+                    printf("[AVISO] O objeto selecionado nao eh um poligono. Selecione um poligono para usar esta funcao.\n");
+                }
+            } else {
+                printf("[AVISO] Nenhum objeto selecionado. Selecione um poligono para calcular o fecho convexo.\n");
+            }
             break;
 
         // Ações específicas de transformação

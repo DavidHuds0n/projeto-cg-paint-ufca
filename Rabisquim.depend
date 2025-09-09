@@ -399,3 +399,161 @@
 	"polygon.h"
 	<stdio.h>
 
+1757382749 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\animation.c
+	<math.h>
+	<string.h>
+	<GL/glut.h>
+	"animation.h"
+	"objects.h"
+	"transformations.h"
+	"utils.h"
+	"input.h"
+	"config.h"
+
+1757382749 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\animation.h
+	"config.h"
+
+1757382749 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\config.h
+
+1757382749 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\objects.h
+	"point.h"
+	"segment.h"
+	"polygon.h"
+	"config.h"
+
+1757382749 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\point.h
+
+1757382749 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\segment.h
+	"point.h"
+
+1757382749 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\polygon.h
+	"point.h"
+	"config.h"
+
+1757382749 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\transformations.h
+	"objects.h"
+	"point.h"
+
+1757382749 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\utils.h
+	"objects.h"
+	"point.h"
+
+1757382749 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\input.h
+	"point.h"
+	"config.h"
+	"polygon.h"
+
+1757384901 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\convexhull.c
+	<stdio.h>
+	<stdlib.h>
+	<float.h>
+	"convexhull.h"
+	"point.h"
+
+1757384885 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\convexhull.h
+	"polygon.h"
+
+1757382749 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\file_io.c
+	"file_io.h"
+	"objects.h"
+	"point.h"
+	"segment.h"
+	"polygon.h"
+	<stdio.h>
+	<string.h>
+
+1757382749 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\file_io.h
+	<stdlib.h>
+	<stdio.h>
+
+1757382749 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\main.c
+	<GL/glut.h>
+	<stdio.h>
+	<stdlib.h>
+	"config.h"
+	"render.h"
+	"input.h"
+	"objects.h"
+	"point.h"
+	"segment.h"
+	"polygon.h"
+	"transformations.h"
+	"animation.h"
+	"file_io.h"
+
+1757382749 c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\render.h
+
+1757382749 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\objects.c
+	<stdio.h>
+	<stdlib.h>
+	<GL/glut.h>
+	"objects.h"
+	"point.h"
+	"segment.h"
+	"polygon.h"
+	"config.h"
+	"input.h"
+	"animation.h"
+
+1757382749 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\point.c
+	<GL/glut.h>
+	<stdio.h>
+	"point.h"
+	"config.h"
+
+1757382749 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\polygon.c
+	<GL/glut.h>
+	<GL/glu.h>
+	<stdio.h>
+	"polygon.h"
+	"point.h"
+	"config.h"
+	"utils.h"
+	"objects.h"
+
+1757382749 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\render.c
+	<stdio.h>
+	<GL/glut.h>
+	"render.h"
+	"objects.h"
+
+1757382749 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\segment.c
+	<GL/glut.h>
+	<stdio.h>
+	<math.h>
+	"segment.h"
+	"point.h"
+
+1757382749 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\transformations.c
+	<stdio.h>
+	<math.h>
+	"transformations.h"
+	"objects.h"
+	"point.h"
+	"segment.h"
+	"polygon.h"
+	"utils.h"
+
+1757382749 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\utils.c
+	"utils.h"
+	"objects.h"
+	"segment.h"
+	"polygon.h"
+	<stdio.h>
+
+1757385654 source:c:\users\outer\onedrive\documentos\cg\code\projeto cg paint\nova pasta\projeto-cg-paint-ufca\input.c
+	<GL/glut.h>
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+	"config.h"
+	"input.h"
+	"objects.h"
+	"point.h"
+	"segment.h"
+	"polygon.h"
+	"transformations.h"
+	"file_io.h"
+	"animation.h"
+	"convexhull.h"
+
