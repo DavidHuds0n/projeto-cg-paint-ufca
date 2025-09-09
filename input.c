@@ -318,7 +318,7 @@ void keyboardCallback(unsigned char key, int x, int y) {
                     if (newConvexHull != NULL) {
                         free(originalPolygon); // Libera a memória do polígono antigo.
                         selectedObject->data = newConvexHull; // Atualiza o ponteiro para o novo.
-                        printf("[INFO] Poligono transformado em seu fecho convexo.\n");
+                        // printf("[INFO] Poligono transformado em seu fecho convexo.\n");
                     } else {
                         printf("[AVISO] Nao foi possível calcular o fecho convexo (poligono pode ter menos de 3 vertices).\n");
                     }
